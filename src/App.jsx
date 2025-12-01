@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import AuthComponent from "./AuthComponent";
+import AdminLoginPage from "./AdminLoginPage";
 
 function ChatBotBubble({ dark, position = "bottom-right" }) {
   const [showWA, setShowWA] = useState(true);
@@ -139,6 +140,7 @@ export default function WebDevApp() {
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [authMode, setAuthMode] = useState("login");
   const [currentUser, setCurrentUser] = useState(null);
+  const [adminUser, setAdminUser] = useState(null);
 
   useEffect(() => { 
     const t = setTimeout(() => setLoading(false), 2200); 
@@ -158,6 +160,15 @@ export default function WebDevApp() {
         setCurrentUser(JSON.parse(savedUser));
       } catch (e) {
         console.log("Error loading user");
+      }
+    }
+
+    const savedAdminUser = localStorage.getItem("webdev_adminUser");
+    if (savedAdminUser) {
+      try {
+        setAdminUser(JSON.parse(savedAdminUser));
+      } catch (e) {
+        console.log("Error loading admin user");
       }
     }
   }, []);
@@ -356,6 +367,14 @@ export default function WebDevApp() {
           />
         )}
 
+        {route === 'admin' && (
+          <AdminLoginPage
+            dark={dark}
+            onClose={() => go('home')}
+            onAdminLogin={(user) => setAdminUser(user)}
+          />
+        )}
+
       </main>
 
       <div className="rounded-3xl p-8 bg-gradient-to-r from-indigo-700/40 to-fuchsia-700/30 border border-white/6 backdrop-blur shadow-2xl max-w-7xl mx-auto px-6 py-12 my-12">
@@ -365,7 +384,7 @@ export default function WebDevApp() {
             <div className="text-slate-300 mt-2">Coba gratis 7 hari — akses penuh ke semua kursus dan komunitas.</div>
           </div>
           <div>
-            <button className="px-6 py-3 rounded-2xl bg-white text-slate-900 font-bold">Mulai Free Trial</button>
+            <button onClick={() => go('auth')} className="px-6 py-3 rounded-2xl bg-white text-slate-900 font-bold hover:shadow-lg transition">Mulai Free Trial</button>
           </div>
         </div>
       </div>
@@ -373,7 +392,10 @@ export default function WebDevApp() {
       <footer className="relative z-10 mt-12 border-t border-white/6 py-8">
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between text-sm text-slate-400">
           <div>© {new Date().getFullYear()} WebDev Academy</div>
-          <div className="flex gap-4">Terms · Privacy · Contact</div>
+          <div className="flex gap-4">
+            Terms · Privacy · Contact
+            {!adminUser && <button onClick={() => go('admin')} className="text-xs text-slate-500 hover:text-slate-300" title="Admin">⚙️</button>}
+          </div>
         </div>
       </footer>
 
