@@ -728,7 +728,7 @@ export default function WebDevApp() {
 
         {route === "course-learn" && selectedCourse && currentUser && (
           <CourseLearningPage 
-            course={selectedCourse} 
+            courseId={selectedCourse.id}
             currentUser={currentUser}
             onBack={() => go("courses")}
             dark={dark}
