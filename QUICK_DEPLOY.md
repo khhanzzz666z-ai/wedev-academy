@@ -8,12 +8,14 @@
 ## 🔗 Step 1: Push ke GitHub
 
 ### 1a. Buat Repository di GitHub
+
 1. Buka https://github.com/new
 2. Nama: `webdev-academy`
 3. Klik "Create repository"
 4. Copy HTTPS URL (akan digunakan di step selanjutnya)
 
 ### 1b. Push Project ke GitHub
+
 ```powershell
 cd "c:\Users\admin\Documents\webdev academy"
 git remote add origin https://github.com/YOUR_USERNAME/webdev-academy.git
@@ -26,6 +28,7 @@ Ganti `YOUR_USERNAME` dengan username GitHub Anda!
 ## 🌐 Step 2: Deploy ke Netlify
 
 ### Opsi A: Drag & Drop (Paling Mudah)
+
 ```powershell
 # Build dulu
 npm run build
@@ -37,6 +40,7 @@ npm run build
 ```
 
 ### Opsi B: Auto Deploy dari GitHub (Recommended)
+
 1. Buka https://app.netlify.com
 2. Klik "New site from Git"
 3. Pilih GitHub → Authorize
@@ -45,11 +49,12 @@ npm run build
 6. Publish directory: `dist`
 7. Klik "Deploy site"
 
-Site Anda akan live dalam 1-2 menit! 
+Site Anda akan live dalam 1-2 menit!
 
 **URL akan seperti:** `https://your-random-name.netlify.app`
 
 ### Opsi C: Netlify CLI (Advanced)
+
 ```powershell
 # Install Netlify CLI
 npm install -g netlify-cli
@@ -78,6 +83,7 @@ netlify deploy --prod --dir=dist
 ## 🔄 Continuous Deployment
 
 Setelah setup GitHub + Netlify:
+
 1. Buat perubahan di code lokal
 2. `git add .` dan `git commit -m "message"`
 3. `git push`
@@ -95,5 +101,6 @@ Setelah setup GitHub + Netlify:
 **Selamat! Website Anda sudah live di internet! 🎉**
 
 Untuk bantuan lebih lanjut:
+
 - Netlify Docs: https://docs.netlify.com
 - GitHub Help: https://docs.github.com

@@ -26,14 +26,14 @@ export default function AdminLoginPage({ dark, onClose, onAdminLogin }) {
         const adminUser = {
           id: "admin-001",
           fullName: "Administrator",
-          email: "admin@webdev-academy.com",
+          email: "webdevacademy@gmail.com",
           role: "admin",
           loginTime: new Date().toISOString(),
         };
-        
+
         localStorage.setItem("webdev_adminUser", JSON.stringify(adminUser));
         setSuccess("Login Admin berhasil!");
-        
+
         setTimeout(() => {
           onAdminLogin(adminUser);
           onClose();
@@ -52,7 +52,8 @@ export default function AdminLoginPage({ dark, onClose, onAdminLogin }) {
         <motion.div
           className="absolute top-0 left-0 w-72 h-72 rounded-full blur-3xl"
           style={{
-            background: "linear-gradient(135deg, rgba(124,58,237,0.3), rgba(236,72,153,0.3))",
+            background:
+              "linear-gradient(135deg, rgba(124,58,237,0.3), rgba(236,72,153,0.3))",
           }}
           animate={{
             scale: [1, 1.2, 1],
@@ -63,7 +64,8 @@ export default function AdminLoginPage({ dark, onClose, onAdminLogin }) {
         <motion.div
           className="absolute bottom-0 right-0 w-72 h-72 rounded-full blur-3xl"
           style={{
-            background: "linear-gradient(135deg, rgba(6,182,212,0.3), rgba(139,92,246,0.3))",
+            background:
+              "linear-gradient(135deg, rgba(6,182,212,0.3), rgba(139,92,246,0.3))",
           }}
           animate={{
             scale: [1.2, 1, 1.2],
@@ -80,7 +82,11 @@ export default function AdminLoginPage({ dark, onClose, onAdminLogin }) {
         transition={{ duration: 0.6 }}
         className="w-full max-w-md px-6"
       >
-        <div className={`p-8 rounded-2xl backdrop-blur border border-white/10 shadow-2xl ${dark ? 'bg-white/5' : 'bg-white/80'}`}>
+        <div
+          className={`p-8 rounded-2xl backdrop-blur border border-white/10 shadow-2xl ${
+            dark ? "bg-white/5" : "bg-white/80"
+          }`}
+        >
           {/* Header */}
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-indigo-500 to-fuchsia-500 mb-4">
@@ -95,7 +101,11 @@ export default function AdminLoginPage({ dark, onClose, onAdminLogin }) {
               </svg>
             </div>
             <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-            <p className={`text-sm mt-2 ${dark ? 'text-slate-400' : 'text-slate-600'}`}>
+            <p
+              className={`text-sm mt-2 ${
+                dark ? "text-slate-400" : "text-slate-600"
+              }`}
+            >
               Masuk dengan password admin
             </p>
           </div>
@@ -125,7 +135,11 @@ export default function AdminLoginPage({ dark, onClose, onAdminLogin }) {
           {/* Form */}
           <form onSubmit={handleAdminLogin} className="space-y-6">
             <div>
-              <label className={`block text-sm font-medium mb-2 ${dark ? 'text-slate-300' : 'text-slate-700'}`}>
+              <label
+                className={`block text-sm font-medium mb-2 ${
+                  dark ? "text-slate-300" : "text-slate-700"
+                }`}
+              >
                 Password Admin
               </label>
               <input
@@ -135,8 +149,8 @@ export default function AdminLoginPage({ dark, onClose, onAdminLogin }) {
                 onChange={(e) => setPassword(e.target.value)}
                 className={`w-full px-4 py-3 rounded-lg border transition focus:outline-none ${
                   dark
-                    ? 'bg-white/10 border-white/20 text-white placeholder-slate-400 focus:border-indigo-500 focus:bg-white/15'
-                    : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400 focus:border-indigo-500'
+                    ? "bg-white/10 border-white/20 text-white placeholder-slate-400 focus:border-indigo-500 focus:bg-white/15"
+                    : "bg-white border-gray-300 text-gray-900 placeholder-gray-400 focus:border-indigo-500"
                 }`}
                 autoComplete="off"
               />
@@ -152,9 +166,20 @@ export default function AdminLoginPage({ dark, onClose, onAdminLogin }) {
           </form>
 
           {/* Security Note */}
-          <div className={`mt-6 p-4 rounded-lg ${dark ? 'bg-white/5 border border-white/10' : 'bg-gray-100 border border-gray-300'}`}>
-            <p className={`text-xs ${dark ? 'text-slate-400' : 'text-slate-600'}`}>
-              <strong>🔐 Catatan:</strong> Halaman ini hanya bisa diakses oleh administrator. Password bersifat privat.
+          <div
+            className={`mt-6 p-4 rounded-lg ${
+              dark
+                ? "bg-white/5 border border-white/10"
+                : "bg-gray-100 border border-gray-300"
+            }`}
+          >
+            <p
+              className={`text-xs ${
+                dark ? "text-slate-400" : "text-slate-600"
+              }`}
+            >
+              <strong>🔐 Catatan:</strong> Halaman ini hanya bisa diakses oleh
+              administrator. Password bersifat privat.
             </p>
           </div>
 
@@ -163,8 +188,8 @@ export default function AdminLoginPage({ dark, onClose, onAdminLogin }) {
             onClick={onClose}
             className={`w-full mt-4 py-2 rounded-lg border transition text-sm font-medium ${
               dark
-                ? 'border-white/20 text-slate-300 hover:bg-white/5'
-                : 'border-gray-300 text-gray-600 hover:bg-gray-50'
+                ? "border-white/20 text-slate-300 hover:bg-white/5"
+                : "border-gray-300 text-gray-600 hover:bg-gray-50"
             }`}
           >
             Kembali ke Home
@@ -172,7 +197,11 @@ export default function AdminLoginPage({ dark, onClose, onAdminLogin }) {
         </div>
 
         {/* Footer */}
-        <div className={`text-center mt-8 text-xs ${dark ? 'text-slate-500' : 'text-slate-600'}`}>
+        <div
+          className={`text-center mt-8 text-xs ${
+            dark ? "text-slate-500" : "text-slate-600"
+          }`}
+        >
           WebDev Academy © 2024 - Admin Panel
         </div>
       </motion.div>

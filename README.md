@@ -23,11 +23,13 @@ Platform pembelajaran web development modern dengan fitur interaktif, dark mode,
 ## Instalasi & Setup
 
 ### 1. Install Dependencies
+
 ```bash
 npm install
 ```
 
 ### 2. Jalankan Development Server
+
 ```bash
 npm run dev
 ```
@@ -35,11 +37,13 @@ npm run dev
 Server akan berjalan di `http://localhost:5173`
 
 ### 3. Build untuk Production
+
 ```bash
 npm run build
 ```
 
 ### 4. Preview Build
+
 ```bash
 npm run preview
 ```
@@ -71,7 +75,9 @@ webdev-academy/
 ## Komponen Utama
 
 ### ChatBotBubble
+
 Chatbot interaktif yang terletak di pojok kanan bawah. Fitur:
+
 - WhatsApp integration button
 - Quick replies
 - Real-time chat simulation
@@ -79,7 +85,9 @@ Chatbot interaktif yang terletak di pojok kanan bawah. Fitur:
 - Customizable position
 
 ### WebDevApp
+
 Komponen utama aplikasi dengan:
+
 - State management untuk routing
 - Dark mode toggle
 - Loading animation
@@ -88,17 +96,21 @@ Komponen utama aplikasi dengan:
 ## Customization
 
 ### Mengubah WhatsApp Number
+
 Edit di `ChatBotBubble`:
+
 ```jsx
 <a href="https://wa.me/YOUR_NUMBER_HERE" ...>
 ```
 
 ### Mengubah Kursus
+
 Edit `coursesCatalog` array di `WebDevApp`:
+
 ```jsx
 const coursesCatalog = [
-  { id: "...", title: "...", level: "...", hours: 48, desc: "..." }
-]
+  { id: "...", title: "...", level: "...", hours: 48, desc: "..." },
+];
 ```
 
 ## Browser Support

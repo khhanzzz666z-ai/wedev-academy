@@ -5,11 +5,13 @@
 ### Opsi 1: Manual Deploy (Drag & Drop)
 
 1. **Build Proyek**
+
    ```bash
    npm run build
    ```
 
 2. **Buka Netlify**
+
    - Buka https://app.netlify.com
    - Login atau daftar akun gratis
 
@@ -21,6 +23,7 @@
 ### Opsi 2: Deploy dari GitHub (Recommended untuk Production)
 
 1. **Push ke GitHub**
+
    ```bash
    git remote add origin https://github.com/YOUR_USERNAME/webdev-academy.git
    git branch -M main
@@ -28,6 +31,7 @@
    ```
 
 2. **Connect GitHub ke Netlify**
+
    - Login ke https://app.netlify.com
    - Klik "New site from Git"
    - Pilih GitHub dan authorize
@@ -41,11 +45,13 @@
 ### Opsi 3: Netlify CLI
 
 1. **Install Netlify CLI**
+
    ```bash
    npm install -g netlify-cli
    ```
 
 2. **Login ke Netlify**
+
    ```bash
    netlify login
    ```
@@ -60,6 +66,7 @@
 1. **Push ke GitHub** (jika belum)
 
 2. **Buka Vercel**
+
    - https://vercel.com
    - Klik "Import Project"
    - Pilih GitHub repository
@@ -73,24 +80,29 @@
 Untuk menambah environment variables:
 
 **Netlify:**
+
 - Site Settings → Build & Deploy → Environment → Add Variable
 
 **Vercel:**
+
 - Settings → Environment Variables → Add
 
 ## Monitoring & Logs
 
 **Netlify:**
+
 - Deploys tab → lihat history
 - Logs → error tracking
 
 **Vercel:**
+
 - Deployments → lihat status
 - Real-time logs
 
 ## Custom Domain
 
 Keduanya support custom domain:
+
 1. Beli domain (Namecheap, GoDaddy, dll)
 2. Update nameserver atau DNS records
 3. Setup di Netlify/Vercel dashboard
@@ -105,15 +117,18 @@ Keduanya support custom domain:
 ## Troubleshooting
 
 **Build gagal?**
+
 - Check build logs di Netlify/Vercel
 - Pastikan `npm run build` berjalan lokal
 - Clear cache dan rebuild
 
 **Static files 404?**
+
 - Check `netlify.toml` sudah ada redirect rule
 - Folder `dist` harus publish folder
 
 **Animasi lag?**
+
 - Check browser performance
 - Reduce blur-3xl atau animasi kompleks jika perlu
 
