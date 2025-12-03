@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
+import EmailVerificationComponent from "./EmailVerificationComponent";
 
 const FloatingElement = ({
   delay,
@@ -56,6 +57,9 @@ export default function AuthComponent({ dark, onClose, onLoginSuccess }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [showVerification, setShowVerification] = useState(false);
+  const [pendingUserEmail, setPendingUserEmail] = useState("");
+  const [pendingUserName, setPendingUserName] = useState("");
 
   // Form states
   const [loginForm, setLoginForm] = useState({ email: "", password: "" });
@@ -74,40 +78,63 @@ export default function AuthComponent({ dark, onClose, onLoginSuccess }) {
   // OAuth Handlers
   const handleGoogleLogin = () => {
     setLoading(true);
-    setTimeout(() => {
-      const googleUser = {
-        id: Date.now(),
-        fullName: "Google User " + Math.floor(Math.random() * 1000),
-        email: "user@gmail.com",
-        provider: "google",
-      };
-      localStorage.setItem("webdev_currentUser", JSON.stringify(googleUser));
-      setSuccess("Login dengan Google berhasil!");
-      setTimeout(() => {
-        onLoginSuccess(googleUser);
-        onClose();
-      }, 1000);
-      setLoading(false);
-    }, 1500);
+    // In real implementation, redirect to Google OAuth
+    // For now, open a guide or show a message
+    alert("Redirecting ke Google OAuth...\n\nUntuk implementasi real:\n1. Setup Google OAuth di console.cloud.google.com\n2. Dapatkan Client ID\n3. Integrate dengan aplikasi\n\nUntuk demo, gunakan email/password atau GitHub OAuth.");
+    setLoading(false);
   };
 
   const handleGitHubLogin = () => {
     setLoading(true);
-    setTimeout(() => {
-      const githubUser = {
-        id: Date.now(),
-        fullName: "GitHub User " + Math.floor(Math.random() * 1000),
-        email: "user@github.com",
-        provider: "github",
-      };
-      localStorage.setItem("webdev_currentUser", JSON.stringify(githubUser));
-      setSuccess("Login dengan GitHub berhasil!");
+    // Real GitHub OAuth integration
+    const githubClientId = "Ov23liXU7bBTqWzwLqLp"; // Demo Client ID
+    const redirectUri = window.location.origin;
+    const scope = "user:email";
+    
+    // Redirect ke GitHub OAuth
+    const githubOAuthUrl = `https://github.com/login/oauth/authorize?client_id=${githubClientId}&redirect_uri=${redirectUri}&scope=${scope}`;
+    
+    // For demo, show alternative approach
+    const userWantsGithub = confirm(
+      "Buka GitHub untuk verifikasi?\n\nAtau gunakan demo GitHub user untuk testing?"
+    );
+    
+    if (userWantsGithub) {
+      // Real implementation would redirect here
+      window.open(githubOAuthUrl, "_blank");
+      
+      // For demo purposes, auto-login after 2 seconds
       setTimeout(() => {
-        onLoginSuccess(githubUser);
-        onClose();
-      }, 1000);
+        const demoGithubUser = {
+          id: "gh-" + Date.now(),
+          fullName: "GitHub Developer",
+          email: "dev@github.com",
+          emailVerified: true,
+          provider: "github",
+          enrolledCourses: [],
+          trialStatus: "active",
+          trialEndDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+          createdAt: new Date().toISOString(),
+        };
+        
+        // Save to users list if not exist
+        const users = JSON.parse(localStorage.getItem("webdev_users") || "[]");
+        if (!users.find(u => u.email === demoGithubUser.email)) {
+          users.push(demoGithubUser);
+          localStorage.setItem("webdev_users", JSON.stringify(users));
+        }
+        
+        localStorage.setItem("webdev_currentUser", JSON.stringify(demoGithubUser));
+        setSuccess("Login dengan GitHub berhasil!");
+        setTimeout(() => {
+          onLoginSuccess(demoGithubUser);
+          onClose();
+        }, 1000);
+        setLoading(false);
+      }, 2000);
+    } else {
       setLoading(false);
-    }, 1500);
+    }
   };
 
   // Handle Login
@@ -224,13 +251,21 @@ export default function AuthComponent({ dark, onClose, onLoginSuccess }) {
         enrolledCourses: [],
         trialStatus: "active",
         trialEndDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        emailVerified: false,
+        verificationCode: null,
+        provider: "email",
         createdAt: new Date().toISOString(),
       };
 
       users.push(newUser);
       localStorage.setItem("webdev_users", JSON.stringify(users));
 
-      setSuccess("Registrasi berhasil! Silakan login dengan akun Anda");
+      // Show verification component
+      setPendingUserEmail(registerForm.email);
+      setPendingUserName(registerForm.fullName);
+      setShowVerification(true);
+      
+      setSuccess("Registrasi berhasil! Silakan verifikasi email Anda");
       setRegisterForm({
         fullName: "",
         email: "",
@@ -239,7 +274,6 @@ export default function AuthComponent({ dark, onClose, onLoginSuccess }) {
       });
 
       setTimeout(() => {
-        setMode("login");
         setSuccess("");
       }, 1500);
 
@@ -248,7 +282,23 @@ export default function AuthComponent({ dark, onClose, onLoginSuccess }) {
   };
 
   return (
-    <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 items-center relative">
+    <>
+      {showVerification && (
+        <EmailVerificationComponent
+          email={pendingUserEmail}
+          fullName={pendingUserName}
+          dark={dark}
+          onVerificationSuccess={() => {
+            setShowVerification(false);
+            setMode("login");
+          }}
+          onClose={() => {
+            setShowVerification(false);
+            setMode("login");
+          }}
+        />
+      )}
+      <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 items-center relative">
       {/* Animated Background Elements */}
       <div className="hidden md:block absolute -left-20 top-0 w-96 h-96 pointer-events-none overflow-hidden">
         <FloatingElement
@@ -684,6 +734,7 @@ export default function AuthComponent({ dark, onClose, onLoginSuccess }) {
           </button>
         </div>
       </motion.div>
-    </div>
+      </div>
+    </>
   );
 }

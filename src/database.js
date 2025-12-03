@@ -13,6 +13,9 @@ export const initializeDatabase = () => {
         enrolledCourses: ["frontend", "backend"],
         trialStatus: "active",
         trialEndDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        emailVerified: true,
+        verificationCode: null,
+        provider: "email",
         createdAt: new Date().toISOString(),
       },
       {
@@ -23,6 +26,9 @@ export const initializeDatabase = () => {
         enrolledCourses: ["fullstack"],
         trialStatus: "expired",
         trialEndDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+        emailVerified: true,
+        verificationCode: null,
+        provider: "email",
         createdAt: new Date().toISOString(),
       },
     ];
@@ -333,6 +339,71 @@ export const getCourseProgress = (courseId) => {
   const completedLessons = course.lessons.filter((l) => l.completed).length;
   
   return totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
+};
+
+// Email verification functions
+export const generateVerificationCode = () => {
+  return Math.random().toString(36).substring(2, 8).toUpperCase();
+};
+
+export const sendVerificationEmail = (email, fullName) => {
+  // Simulate sending verification email
+  const code = generateVerificationCode();
+  
+  // In real app, you would send via email service
+  console.log(`Verification code for ${fullName} (${email}): ${code}`);
+  
+  // Store verification code in localStorage temporarily
+  const verificationCodes = JSON.parse(localStorage.getItem("webdev_verification_codes") || "{}");
+  verificationCodes[email] = {
+    code: code,
+    createdAt: Date.now(),
+    expiresAt: Date.now() + 10 * 60 * 1000, // 10 minutes
+  };
+  localStorage.setItem("webdev_verification_codes", JSON.stringify(verificationCodes));
+  
+  return code;
+};
+
+export const verifyEmail = (email, code) => {
+  const verificationCodes = JSON.parse(localStorage.getItem("webdev_verification_codes") || "{}");
+  
+  if (!verificationCodes[email]) {
+    return { success: false, message: "No verification code found" };
+  }
+  
+  const { code: storedCode, expiresAt } = verificationCodes[email];
+  
+  if (Date.now() > expiresAt) {
+    delete verificationCodes[email];
+    localStorage.setItem("webdev_verification_codes", JSON.stringify(verificationCodes));
+    return { success: false, message: "Verification code expired" };
+  }
+  
+  if (storedCode !== code) {
+    return { success: false, message: "Invalid verification code" };
+  }
+  
+  // Update user email verified status
+  const users = JSON.parse(localStorage.getItem("webdev_users") || "[]");
+  const user = users.find((u) => u.email === email);
+  
+  if (user) {
+    user.emailVerified = true;
+    user.verificationCode = null;
+    localStorage.setItem("webdev_users", JSON.stringify(users));
+  }
+  
+  delete verificationCodes[email];
+  localStorage.setItem("webdev_verification_codes", JSON.stringify(verificationCodes));
+  
+  return { success: true, message: "Email verified successfully" };
+};
+
+export const isEmailVerified = (email) => {
+  const users = JSON.parse(localStorage.getItem("webdev_users") || "[]");
+  const user = users.find((u) => u.email === email);
+  return user ? user.emailVerified : false;
 };
 
 // Initialize database on import
