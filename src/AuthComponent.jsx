@@ -155,11 +155,7 @@ export default function AuthComponent({ dark, onClose, onLoginSuccess }) {
       // Login successful
       localStorage.setItem(
         "webdev_currentUser",
-        JSON.stringify({
-          id: user.id,
-          fullName: user.fullName,
-          email: user.email,
-        })
+        JSON.stringify(user)
       );
 
       setSuccess("Login berhasil! Selamat datang " + user.fullName);
@@ -225,6 +221,9 @@ export default function AuthComponent({ dark, onClose, onLoginSuccess }) {
         fullName: registerForm.fullName,
         email: registerForm.email,
         password: registerForm.password,
+        enrolledCourses: [],
+        trialStatus: "active",
+        trialEndDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
         createdAt: new Date().toISOString(),
       };
 
