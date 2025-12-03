@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import EmailVerificationComponent from "./EmailVerificationComponent";
+import OAuthEmailComponent from "./OAuthEmailComponent";
 
 const FloatingElement = ({
   delay,
@@ -60,6 +61,8 @@ export default function AuthComponent({ dark, onClose, onLoginSuccess }) {
   const [showVerification, setShowVerification] = useState(false);
   const [pendingUserEmail, setPendingUserEmail] = useState("");
   const [pendingUserName, setPendingUserName] = useState("");
+  const [showOAuthEmail, setShowOAuthEmail] = useState(false);
+  const [oauthProvider, setOauthProvider] = useState("");
 
   // Form states
   const [loginForm, setLoginForm] = useState({ email: "", password: "" });
@@ -77,64 +80,55 @@ export default function AuthComponent({ dark, onClose, onLoginSuccess }) {
 
   // OAuth Handlers
   const handleGoogleLogin = () => {
-    setLoading(true);
-    // In real implementation, redirect to Google OAuth
-    // For now, open a guide or show a message
-    alert("Redirecting ke Google OAuth...\n\nUntuk implementasi real:\n1. Setup Google OAuth di console.cloud.google.com\n2. Dapatkan Client ID\n3. Integrate dengan aplikasi\n\nUntuk demo, gunakan email/password atau GitHub OAuth.");
-    setLoading(false);
+    setOauthProvider("Google");
+    setShowOAuthEmail(true);
   };
 
   const handleGitHubLogin = () => {
+    setOauthProvider("GitHub");
+    setShowOAuthEmail(true);
+  };
+
+  const handleOAuthEmailSubmit = ({ email, fullName }) => {
     setLoading(true);
-    // Real GitHub OAuth integration
-    const githubClientId = "Ov23liXU7bBTqWzwLqLp"; // Demo Client ID
-    const redirectUri = window.location.origin;
-    const scope = "user:email";
-    
-    // Redirect ke GitHub OAuth
-    const githubOAuthUrl = `https://github.com/login/oauth/authorize?client_id=${githubClientId}&redirect_uri=${redirectUri}&scope=${scope}`;
-    
-    // For demo, show alternative approach
-    const userWantsGithub = confirm(
-      "Buka GitHub untuk verifikasi?\n\nAtau gunakan demo GitHub user untuk testing?"
-    );
-    
-    if (userWantsGithub) {
-      // Real implementation would redirect here
-      window.open(githubOAuthUrl, "_blank");
+
+    setTimeout(() => {
+      const users = JSON.parse(localStorage.getItem("webdev_users") || "[]");
       
-      // For demo purposes, auto-login after 2 seconds
-      setTimeout(() => {
-        const demoGithubUser = {
-          id: "gh-" + Date.now(),
-          fullName: "GitHub Developer",
-          email: "dev@github.com",
+      // Check if email already exists
+      let existingUser = users.find(u => u.email === email);
+      
+      if (!existingUser) {
+        // Create new user for OAuth
+        existingUser = {
+          id: `${oauthProvider.toLowerCase()}-${Date.now()}`,
+          fullName: fullName,
+          email: email,
+          password: null,
           emailVerified: true,
-          provider: "github",
+          verificationCode: null,
+          provider: oauthProvider.toLowerCase(),
           enrolledCourses: [],
           trialStatus: "active",
           trialEndDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
           createdAt: new Date().toISOString(),
         };
         
-        // Save to users list if not exist
-        const users = JSON.parse(localStorage.getItem("webdev_users") || "[]");
-        if (!users.find(u => u.email === demoGithubUser.email)) {
-          users.push(demoGithubUser);
-          localStorage.setItem("webdev_users", JSON.stringify(users));
-        }
-        
-        localStorage.setItem("webdev_currentUser", JSON.stringify(demoGithubUser));
-        setSuccess("Login dengan GitHub berhasil!");
-        setTimeout(() => {
-          onLoginSuccess(demoGithubUser);
-          onClose();
-        }, 1000);
-        setLoading(false);
-      }, 2000);
-    } else {
+        users.push(existingUser);
+        localStorage.setItem("webdev_users", JSON.stringify(users));
+      }
+
+      localStorage.setItem("webdev_currentUser", JSON.stringify(existingUser));
+      setSuccess(`Login dengan ${oauthProvider} berhasil!`);
+      setShowOAuthEmail(false);
+      
+      setTimeout(() => {
+        onLoginSuccess(existingUser);
+        onClose();
+      }, 1000);
+      
       setLoading(false);
-    }
+    }, 1000);
   };
 
   // Handle Login
@@ -298,6 +292,20 @@ export default function AuthComponent({ dark, onClose, onLoginSuccess }) {
           }}
         />
       )}
+      
+      {showOAuthEmail && (
+        <OAuthEmailComponent
+          provider={oauthProvider}
+          dark={dark}
+          onSubmit={handleOAuthEmailSubmit}
+          onClose={() => {
+            setShowOAuthEmail(false);
+            setOauthProvider("");
+            setLoading(false);
+          }}
+        />
+      )}
+      
       <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 items-center relative">
       {/* Animated Background Elements */}
       <div className="hidden md:block absolute -left-20 top-0 w-96 h-96 pointer-events-none overflow-hidden">

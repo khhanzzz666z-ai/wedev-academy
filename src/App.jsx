@@ -705,7 +705,21 @@ export default function WebDevApp() {
                 <button 
                   onClick={() => {
                     if (currentUser) {
+                      // Enroll user in course
                       enrollUserInCourse(currentUser.id, selectedCourse.id);
+                      
+                      // Update currentUser state with new enrolled courses
+                      const updatedUser = { ...currentUser };
+                      if (!updatedUser.enrolledCourses) {
+                        updatedUser.enrolledCourses = [];
+                      }
+                      if (!updatedUser.enrolledCourses.includes(selectedCourse.id)) {
+                        updatedUser.enrolledCourses.push(selectedCourse.id);
+                      }
+                      setCurrentUser(updatedUser);
+                      localStorage.setItem("webdev_currentUser", JSON.stringify(updatedUser));
+                      
+                      // Navigate to learning page
                       go("course-learn", { courseId: selectedCourse.id });
                     } else {
                       go("auth");
