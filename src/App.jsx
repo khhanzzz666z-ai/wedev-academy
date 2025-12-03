@@ -3,7 +3,14 @@ import { motion } from "framer-motion";
 import AuthComponent from "./AuthComponent";
 import AdminLoginPage from "./AdminLoginPage";
 import CourseLearningPage from "./CourseLearningPage";
-import { getAllCourses, enrollUserInCourse, isUserEnrolled, isTrialActive, getTrialDaysRemaining, getCoursesByUserEnrollment } from "./database";
+import {
+  getAllCourses,
+  enrollUserInCourse,
+  isUserEnrolled,
+  isTrialActive,
+  getTrialDaysRemaining,
+  getCoursesByUserEnrollment,
+} from "./database";
 
 function ChatBotBubble({ dark, position = "bottom-right" }) {
   const [showWA, setShowWA] = useState(true);
@@ -348,7 +355,7 @@ export default function WebDevApp() {
       setSelectedCourse(opts.course);
       setRoute("course");
     } else if (r === "course-learn" && opts && opts.courseId) {
-      const course = coursesList.find(c => c.id === opts.courseId);
+      const course = coursesList.find((c) => c.id === opts.courseId);
       if (course) {
         setSelectedCourse(course);
         setRoute("course-learn");
@@ -702,23 +709,28 @@ export default function WebDevApp() {
                 weekly milestones with quizzes and projects.
               </p>
               <div className="mt-6 flex gap-3">
-                <button 
+                <button
                   onClick={() => {
                     if (currentUser) {
                       // Enroll user in course
                       enrollUserInCourse(currentUser.id, selectedCourse.id);
-                      
+
                       // Update currentUser state with new enrolled courses
                       const updatedUser = { ...currentUser };
                       if (!updatedUser.enrolledCourses) {
                         updatedUser.enrolledCourses = [];
                       }
-                      if (!updatedUser.enrolledCourses.includes(selectedCourse.id)) {
+                      if (
+                        !updatedUser.enrolledCourses.includes(selectedCourse.id)
+                      ) {
                         updatedUser.enrolledCourses.push(selectedCourse.id);
                       }
                       setCurrentUser(updatedUser);
-                      localStorage.setItem("webdev_currentUser", JSON.stringify(updatedUser));
-                      
+                      localStorage.setItem(
+                        "webdev_currentUser",
+                        JSON.stringify(updatedUser)
+                      );
+
                       // Navigate to learning page
                       go("course-learn", { courseId: selectedCourse.id });
                     } else {
@@ -741,7 +753,7 @@ export default function WebDevApp() {
         )}
 
         {route === "course-learn" && selectedCourse && currentUser && (
-          <CourseLearningPage 
+          <CourseLearningPage
             courseId={selectedCourse.id}
             currentUser={currentUser}
             onBack={() => go("courses")}

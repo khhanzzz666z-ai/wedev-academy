@@ -12,7 +12,9 @@ export const initializeDatabase = () => {
         password: "password123",
         enrolledCourses: ["frontend", "backend"],
         trialStatus: "active",
-        trialEndDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        trialEndDate: new Date(
+          Date.now() + 7 * 24 * 60 * 60 * 1000
+        ).toISOString(),
         emailVerified: true,
         verificationCode: null,
         provider: "email",
@@ -25,7 +27,9 @@ export const initializeDatabase = () => {
         password: "password456",
         enrolledCourses: ["fullstack"],
         trialStatus: "expired",
-        trialEndDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+        trialEndDate: new Date(
+          Date.now() - 1 * 24 * 60 * 60 * 1000
+        ).toISOString(),
         emailVerified: true,
         verificationCode: null,
         provider: "email",
@@ -52,7 +56,8 @@ export const initializeDatabase = () => {
           {
             id: "lesson-1-1",
             title: "Introduction to HTML",
-            content: "Learn the basics of HTML, the foundation of web development.",
+            content:
+              "Learn the basics of HTML, the foundation of web development.",
             duration: 45,
             videoUrl: "#",
             completed: false,
@@ -243,7 +248,7 @@ export const getUserById = (id) => {
 export const enrollUserInCourse = (userId, courseId) => {
   const users = JSON.parse(localStorage.getItem("webdev_users") || "[]");
   const user = users.find((u) => u.id === userId);
-  
+
   if (user && !user.enrolledCourses.includes(courseId)) {
     user.enrolledCourses.push(courseId);
     localStorage.setItem("webdev_users", JSON.stringify(users));
@@ -260,7 +265,7 @@ export const isUserEnrolled = (userId, courseId) => {
 export const isTrialActive = (userId) => {
   const user = getUserById(userId);
   if (!user) return false;
-  
+
   if (user.trialStatus === "active") {
     const endDate = new Date(user.trialEndDate);
     if (endDate > new Date()) {
@@ -283,7 +288,7 @@ export const isTrialActive = (userId) => {
 export const getTrialDaysRemaining = (userId) => {
   const user = getUserById(userId);
   if (!user || user.trialStatus !== "active") return 0;
-  
+
   const endDate = new Date(user.trialEndDate);
   const now = new Date();
   const daysRemaining = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
@@ -303,7 +308,7 @@ export const getCourseById = (courseId) => {
 export const getCoursesByUserEnrollment = (userId) => {
   const user = getUserById(userId);
   if (!user) return [];
-  
+
   const courses = getAllCourses();
   return courses.filter((c) => user.enrolledCourses.includes(c.id));
 };
@@ -312,14 +317,14 @@ export const getCoursesByUserEnrollment = (userId) => {
 export const getLessonByCourseAndLessonId = (courseId, lessonId) => {
   const course = getCourseById(courseId);
   if (!course) return null;
-  
+
   return course.lessons.find((l) => l.id === lessonId);
 };
 
 export const markLessonAsCompleted = (courseId, lessonId) => {
   const courses = getAllCourses();
   const course = courses.find((c) => c.id === courseId);
-  
+
   if (course) {
     const lesson = course.lessons.find((l) => l.id === lessonId);
     if (lesson) {
@@ -334,11 +339,13 @@ export const markLessonAsCompleted = (courseId, lessonId) => {
 export const getCourseProgress = (courseId) => {
   const course = getCourseById(courseId);
   if (!course) return 0;
-  
+
   const totalLessons = course.lessons.length;
   const completedLessons = course.lessons.filter((l) => l.completed).length;
-  
-  return totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
+
+  return totalLessons > 0
+    ? Math.round((completedLessons / totalLessons) * 100)
+    : 0;
 };
 
 // Email verification functions
@@ -349,54 +356,67 @@ export const generateVerificationCode = () => {
 export const sendVerificationEmail = (email, fullName) => {
   // Simulate sending verification email
   const code = generateVerificationCode();
-  
+
   // In real app, you would send via email service
   console.log(`Verification code for ${fullName} (${email}): ${code}`);
-  
+
   // Store verification code in localStorage temporarily
-  const verificationCodes = JSON.parse(localStorage.getItem("webdev_verification_codes") || "{}");
+  const verificationCodes = JSON.parse(
+    localStorage.getItem("webdev_verification_codes") || "{}"
+  );
   verificationCodes[email] = {
     code: code,
     createdAt: Date.now(),
     expiresAt: Date.now() + 10 * 60 * 1000, // 10 minutes
   };
-  localStorage.setItem("webdev_verification_codes", JSON.stringify(verificationCodes));
-  
+  localStorage.setItem(
+    "webdev_verification_codes",
+    JSON.stringify(verificationCodes)
+  );
+
   return code;
 };
 
 export const verifyEmail = (email, code) => {
-  const verificationCodes = JSON.parse(localStorage.getItem("webdev_verification_codes") || "{}");
-  
+  const verificationCodes = JSON.parse(
+    localStorage.getItem("webdev_verification_codes") || "{}"
+  );
+
   if (!verificationCodes[email]) {
     return { success: false, message: "No verification code found" };
   }
-  
+
   const { code: storedCode, expiresAt } = verificationCodes[email];
-  
+
   if (Date.now() > expiresAt) {
     delete verificationCodes[email];
-    localStorage.setItem("webdev_verification_codes", JSON.stringify(verificationCodes));
+    localStorage.setItem(
+      "webdev_verification_codes",
+      JSON.stringify(verificationCodes)
+    );
     return { success: false, message: "Verification code expired" };
   }
-  
+
   if (storedCode !== code) {
     return { success: false, message: "Invalid verification code" };
   }
-  
+
   // Update user email verified status
   const users = JSON.parse(localStorage.getItem("webdev_users") || "[]");
   const user = users.find((u) => u.email === email);
-  
+
   if (user) {
     user.emailVerified = true;
     user.verificationCode = null;
     localStorage.setItem("webdev_users", JSON.stringify(users));
   }
-  
+
   delete verificationCodes[email];
-  localStorage.setItem("webdev_verification_codes", JSON.stringify(verificationCodes));
-  
+  localStorage.setItem(
+    "webdev_verification_codes",
+    JSON.stringify(verificationCodes)
+  );
+
   return { success: true, message: "Email verified successfully" };
 };
 

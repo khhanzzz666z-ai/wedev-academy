@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { verifyEmail, sendVerificationEmail } from "./database";
 
-export default function EmailVerificationComponent({ 
-  email, 
-  fullName, 
-  onVerificationSuccess, 
+export default function EmailVerificationComponent({
+  email,
+  fullName,
+  onVerificationSuccess,
   onClose,
-  dark 
+  dark,
 }) {
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
@@ -79,15 +79,26 @@ export default function EmailVerificationComponent({
         } shadow-2xl`}
       >
         <h2 className="text-2xl font-bold mb-2">Verifikasi Email</h2>
-        <p className={`text-sm mb-6 ${dark ? "text-slate-400" : "text-slate-600"}`}>
-          Kami telah mengirim kode verifikasi ke <span className="font-semibold">{email}</span>
+        <p
+          className={`text-sm mb-6 ${
+            dark ? "text-slate-400" : "text-slate-600"
+          }`}
+        >
+          Kami telah mengirim kode verifikasi ke{" "}
+          <span className="font-semibold">{email}</span>
         </p>
 
         {/* Demo Code Display */}
-        <div className={`mb-6 p-4 rounded-lg border-2 border-indigo-500/50 ${
-          dark ? "bg-indigo-500/10" : "bg-indigo-50"
-        }`}>
-          <p className={`text-xs mb-2 ${dark ? "text-slate-400" : "text-slate-600"}`}>
+        <div
+          className={`mb-6 p-4 rounded-lg border-2 border-indigo-500/50 ${
+            dark ? "bg-indigo-500/10" : "bg-indigo-50"
+          }`}
+        >
+          <p
+            className={`text-xs mb-2 ${
+              dark ? "text-slate-400" : "text-slate-600"
+            }`}
+          >
             Kode Verifikasi (untuk demo):
           </p>
           <p className="text-lg font-mono font-bold text-indigo-400">
@@ -136,7 +147,9 @@ export default function EmailVerificationComponent({
         </form>
 
         <div className="mt-6 text-center">
-          <p className={`text-sm ${dark ? "text-slate-400" : "text-slate-600"}`}>
+          <p
+            className={`text-sm ${dark ? "text-slate-400" : "text-slate-600"}`}
+          >
             Tidak menerima kode?
           </p>
           <button
@@ -146,7 +159,9 @@ export default function EmailVerificationComponent({
               resendTimer > 0 ? "opacity-50 cursor-not-allowed" : ""
             }`}
           >
-            {resendTimer > 0 ? `Kirim ulang dalam ${resendTimer}s` : "Kirim Ulang Kode"}
+            {resendTimer > 0
+              ? `Kirim ulang dalam ${resendTimer}s`
+              : "Kirim Ulang Kode"}
           </button>
         </div>
 

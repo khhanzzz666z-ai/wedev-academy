@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 
-export default function OAuthEmailComponent({ 
+export default function OAuthEmailComponent({
   provider = "GitHub",
   onSubmit,
   onClose,
-  dark 
+  dark,
 }) {
   const [email, setEmail] = useState("");
   const [fullName, setFullName] = useState("");
@@ -43,12 +43,14 @@ export default function OAuthEmailComponent({
         } shadow-2xl`}
       >
         <div className="flex items-center gap-3 mb-6">
-          <div className="text-4xl">
-            {provider === "GitHub" ? "🐙" : "🔵"}
-          </div>
+          <div className="text-4xl">{provider === "GitHub" ? "🐙" : "🔵"}</div>
           <div>
             <h2 className="text-2xl font-bold">Login dengan {provider}</h2>
-            <p className={`text-sm ${dark ? "text-slate-400" : "text-slate-600"}`}>
+            <p
+              className={`text-sm ${
+                dark ? "text-slate-400" : "text-slate-600"
+              }`}
+            >
               Lengkapi profil Anda
             </p>
           </div>
@@ -56,7 +58,9 @@ export default function OAuthEmailComponent({
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-2">Nama Lengkap</label>
+            <label className="block text-sm font-medium mb-2">
+              Nama Lengkap
+            </label>
             <input
               type="text"
               value={fullName}
@@ -112,7 +116,11 @@ export default function OAuthEmailComponent({
           </button>
         </form>
 
-        <p className={`text-xs mt-4 text-center ${dark ? "text-slate-500" : "text-slate-500"}`}>
+        <p
+          className={`text-xs mt-4 text-center ${
+            dark ? "text-slate-500" : "text-slate-500"
+          }`}
+        >
           Data Anda akan disimpan aman sesuai Privacy Policy
         </p>
       </motion.div>
