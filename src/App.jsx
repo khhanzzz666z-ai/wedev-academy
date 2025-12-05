@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import AuthComponent from "./AuthComponent";
 import AdminLoginPage from "./AdminLoginPage";
 import CourseLearningPage from "./CourseLearningPage";
+import UserDashboard from "./UserDashboard";
 import {
   getAllCourses,
   enrollUserInCourse,
@@ -414,18 +415,21 @@ export default function WebDevApp() {
         }}
       />
 
-      <header className="relative z-20 max-w-7xl mx-auto px-6 py-6 flex items-center justify-between">
-        <div className="flex items-center gap-3">
+      <header className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6 flex items-center justify-between">
+        <button
+          onClick={() => go("home")}
+          className="flex items-center gap-2 sm:gap-3 hover:opacity-80 transition"
+        >
           <div
-            className={`w-10 h-10 rounded-lg flex items-center justify-center shadow-2xl ${
+            className={`w-9 sm:w-10 h-9 sm:h-10 rounded-lg flex items-center justify-center shadow-2xl ${
               dark
                 ? "bg-gradient-to-br from-indigo-400 to-fuchsia-500"
                 : "bg-gradient-to-br from-indigo-300 to-pink-300"
             }`}
           >
             <svg
-              width="20"
-              height="20"
+              width="18"
+              height="18"
               viewBox="0 0 24 24"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -439,50 +443,56 @@ export default function WebDevApp() {
               />
             </svg>
           </div>
-          <div>
-            <div className="font-bold text-lg leading-tight">
+          <div className="hidden sm:block">
+            <div className="font-bold text-base sm:text-lg leading-tight">
               WebDev Academy
             </div>
             <div className="text-xs text-slate-300">Learn. Build. Ship.</div>
           </div>
-        </div>
+        </button>
 
-        <nav className="hidden md:flex gap-6 items-center text-sm">
-          <button onClick={() => go("home")} className="hover:text-white">
+        <nav className="hidden lg:flex gap-4 items-center text-sm">
+          <button
+            onClick={() => go("home")}
+            className="px-3 py-2 hover:bg-white/5 rounded-lg transition"
+          >
             Home
           </button>
-          <button onClick={() => go("courses")} className="hover:text-white">
-            Courses
+          <button
+            onClick={() => go("courses")}
+            className="px-3 py-2 hover:bg-white/5 rounded-lg transition"
+          >
+            Kursus
           </button>
-          <button onClick={() => go("modules")} className="hover:text-white">
-            Modules
+          <button
+            onClick={() => go("modules")}
+            className="px-3 py-2 hover:bg-white/5 rounded-lg transition"
+          >
+            Modul
           </button>
-          <button onClick={() => go("features")} className="hover:text-white">
-            Features
+          <button
+            onClick={() => go("features")}
+            className="px-3 py-2 hover:bg-white/5 rounded-lg transition"
+          >
+            Fitur
           </button>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 ml-4 pl-4 border-l border-white/10">
             {currentUser ? (
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-fuchsia-500 flex items-center justify-center text-white text-sm font-semibold">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                onClick={() => go("dashboard")}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-white/5 transition"
+              >
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-fuchsia-500 flex items-center justify-center text-white text-xs font-semibold">
                   {currentUser.fullName.charAt(0).toUpperCase()}
                 </div>
                 <div className="text-sm">
                   <div className="font-semibold">{currentUser.fullName}</div>
                   <div className="text-xs text-slate-400">
-                    {currentUser.email}
+                    {currentUser.email.substring(0, 15)}...
                   </div>
                 </div>
-                <button
-                  onClick={() => {
-                    localStorage.removeItem("webdev_currentUser");
-                    setCurrentUser(null);
-                    go("home");
-                  }}
-                  className="px-4 py-2 bg-red-500/20 text-red-300 rounded-xl hover:bg-red-500/30 text-sm"
-                >
-                  Logout
-                </button>
-              </div>
+              </motion.button>
             ) : (
               <>
                 <button
@@ -490,7 +500,7 @@ export default function WebDevApp() {
                     setAuthMode("login");
                     go("auth");
                   }}
-                  className="px-4 py-2 bg-white/10 backdrop-blur rounded-xl hover:bg-white/20"
+                  className="px-4 py-2 bg-white/10 backdrop-blur rounded-lg hover:bg-white/20 transition"
                 >
                   Sign in
                 </button>
@@ -498,54 +508,64 @@ export default function WebDevApp() {
             )}
             <button
               onClick={() => setDark(!dark)}
-              className="px-3 py-2 rounded-lg border border-white/10"
+              className="p-2 rounded-lg border border-white/10 hover:bg-white/5 transition"
             >
               {dark ? "🌙" : "☀️"}
             </button>
           </div>
         </nav>
 
-        <div className="md:hidden flex items-center gap-3">
+        <div className="lg:hidden flex items-center gap-2 sm:gap-3">
           <button
             onClick={() => setDark(!dark)}
-            className="px-3 py-2 rounded-lg border border-white/10"
+            className="p-2 rounded-lg border border-white/10 hover:bg-white/5 transition"
           >
             {dark ? "🌙" : "☀️"}
           </button>
           {currentUser ? (
-            <button
-              onClick={() => {
-                localStorage.removeItem("webdev_currentUser");
-                setCurrentUser(null);
-                go("home");
-              }}
-              className="px-3 py-2 rounded-lg bg-red-500/20 text-sm"
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              onClick={() => go("dashboard")}
+              className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-indigo-500 to-fuchsia-500 flex items-center justify-center text-white text-xs sm:text-sm font-semibold"
             >
-              Logout
-            </button>
+              {currentUser.fullName.charAt(0).toUpperCase()}
+            </motion.button>
           ) : (
             <button
               onClick={() => {
                 setAuthMode("login");
                 go("auth");
               }}
-              className="px-3 py-2 rounded-lg bg-white/10"
+              className="px-3 py-2 rounded-lg bg-white/10 text-sm hover:bg-white/20 transition"
             >
               Login
+            </button>
+          )}
+          {currentUser && (
+            <button
+              onClick={() => {
+                localStorage.removeItem("webdev_currentUser");
+                setCurrentUser(null);
+                go("home");
+              }}
+              className="p-2 rounded-lg text-red-400 hover:bg-red-500/10 transition text-lg"
+              title="Logout"
+            >
+              ✕
             </button>
           )}
         </div>
       </header>
 
-      <main className="relative z-10 max-w-7xl mx-auto px-6 py-12">
+      <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-12">
         {route === "home" && (
-          <section className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+          <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-10 items-center">
             <div className="lg:col-span-7">
               <motion.h1
                 initial={{ y: 30, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.1 }}
-                className="text-4xl md:text-6xl font-extrabold leading-tight"
+                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight"
               >
                 WebDev Academy —{" "}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-fuchsia-400">
@@ -557,20 +577,20 @@ export default function WebDevApp() {
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.2 }}
-                className="mt-6 text-slate-300 max-w-xl"
+                className="mt-4 sm:mt-6 text-slate-300 max-w-xl text-sm sm:text-base leading-relaxed"
               >
                 Kursus interaktif, modul efisien, proyek nyata, dan mentor ahli.
               </motion.p>
-              <div className="mt-8 flex gap-4">
+              <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4">
                 <button
                   onClick={() => go("courses")}
-                  className="inline-flex items-center gap-3 bg-gradient-to-r from-indigo-500 to-fuchsia-500 px-6 py-3 rounded-2xl font-semibold shadow-lg"
+                  className="inline-flex items-center justify-center gap-3 bg-gradient-to-r from-indigo-500 to-fuchsia-500 px-6 py-3 rounded-lg sm:rounded-2xl font-semibold shadow-lg hover:shadow-xl transition text-sm sm:text-base"
                 >
                   Mulai Belajar
                 </button>
                 <button
                   onClick={() => go("features")}
-                  className="inline-flex items-center gap-3 px-6 py-3 rounded-2xl border border-white/10"
+                  className="inline-flex items-center justify-center gap-3 px-6 py-3 rounded-lg sm:rounded-2xl border border-white/10 hover:bg-white/5 transition text-sm sm:text-base"
                 >
                   Lihat Fitur
                 </button>
@@ -626,10 +646,10 @@ export default function WebDevApp() {
 
         {route === "modules" && (
           <div>
-            <h2 className="text-3xl font-bold mb-6">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-6">
               Modul Pembelajaran Efisien
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {[
                 "HTML & CSS Dasar",
                 "JavaScript Modern",
@@ -643,10 +663,10 @@ export default function WebDevApp() {
                   initial={{ y: 20, opacity: 0 }}
                   whileInView={{ y: 0, opacity: 1 }}
                   transition={{ delay: i * 0.08 }}
-                  className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur shadow-xl"
+                  className="p-4 sm:p-6 rounded-lg sm:rounded-2xl bg-white/5 border border-white/10 backdrop-blur shadow-xl hover:shadow-2xl transition"
                 >
-                  <h4 className="font-semibold text-lg">{m}</h4>
-                  <p className="mt-2 text-sm text-slate-300">
+                  <h4 className="font-semibold text-base sm:text-lg">{m}</h4>
+                  <p className="mt-2 text-xs sm:text-sm text-slate-300 leading-relaxed">
                     Materi singkat, langsung ke inti, disertai contoh kode dan
                     latihan.
                   </p>
@@ -658,95 +678,214 @@ export default function WebDevApp() {
 
         {route === "courses" && (
           <div>
-            <h2 className="text-3xl font-bold mb-6">Daftar Kursus</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {coursesCatalog.map((c, i) => (
-                <motion.article
-                  key={c.id}
-                  initial={{ y: 12, opacity: 0 }}
-                  whileInView={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.06 * i }}
-                  className="p-5 rounded-2xl bg-white/3 border border-white/6 backdrop-blur shadow-lg"
-                >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="text-sm text-slate-300">{c.level}</div>
-                      <div className="font-semibold mt-2 text-lg">
-                        {c.title}
+            <h2 className="text-2xl sm:text-3xl font-bold mb-2">
+              Daftar Kursus
+            </h2>
+            <p className="text-slate-400 mb-6 text-xs sm:text-sm sm:text-base">
+              Pilih kursus untuk mulai belajar. Coba gratis 7 hari pertama.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+              {coursesCatalog.map((c, i) => {
+                const isEnrolled =
+                  currentUser && isUserEnrolled(currentUser.id, c.id);
+                return (
+                  <motion.article
+                    key={c.id}
+                    initial={{ y: 12, opacity: 0 }}
+                    whileInView={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.06 * i }}
+                    className={`p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-2xl backdrop-blur shadow-lg border transition-all cursor-pointer hover:shadow-2xl ${
+                      isEnrolled
+                        ? `${
+                            dark
+                              ? "bg-green-500/10 border-green-400/30"
+                              : "bg-green-50 border-green-200"
+                          }`
+                        : `${
+                            dark
+                              ? "bg-white/3 border-white/6"
+                              : "bg-slate-50 border-slate-200"
+                          }`
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <div>
+                        <div className="text-xs sm:text-sm text-slate-300">
+                          {c.level}
+                        </div>
+                        <div className="font-semibold mt-1 sm:mt-2 text-sm sm:text-lg">
+                          {c.title}
+                        </div>
                       </div>
+                      {isEnrolled && (
+                        <div className="text-xs px-2 py-1 rounded-full bg-green-500/20 text-green-300 whitespace-nowrap">
+                          ✓ Terdaftar
+                        </div>
+                      )}
                     </div>
-                    <div className="text-sm text-slate-200">{c.hours}h</div>
-                  </div>
-                  <p className="mt-4 text-slate-300 text-sm">{c.desc}</p>
-                  <div className="mt-6 flex justify-between items-center">
-                    <div className="text-xs text-slate-300">Rating 4.8</div>
-                    <button
-                      onClick={() => go("course", { course: c })}
-                      className="px-4 py-2 bg-gradient-to-r from-indigo-500 to-fuchsia-500 rounded-xl font-medium"
-                    >
-                      Open
-                    </button>
-                  </div>
-                </motion.article>
-              ))}
+                    <div className="text-xs sm:text-sm text-slate-200">
+                      {c.hours}h
+                    </div>
+                    <p className="mt-3 sm:mt-4 text-slate-300 text-xs sm:text-sm leading-relaxed">
+                      {c.desc}
+                    </p>
+                    <div className="mt-4 sm:mt-6 flex justify-between items-center gap-2">
+                      <div className="text-xs text-slate-300">
+                        ⭐ 4.8 • 1234 siswa
+                      </div>
+                      <button
+                        onClick={() => go("course", { course: c })}
+                        className={`px-3 sm:px-4 py-2 rounded-lg sm:rounded-xl font-medium text-xs sm:text-sm transition ${
+                          isEnrolled
+                            ? `${
+                                dark
+                                  ? "bg-green-500/30 text-green-200"
+                                  : "bg-green-100 text-green-700"
+                              } hover:opacity-80`
+                            : "bg-gradient-to-r from-indigo-500 to-fuchsia-500 text-white hover:shadow-lg"
+                        }`}
+                      >
+                        {isEnrolled ? "Lanjutkan" : "Buka"}
+                      </button>
+                    </div>
+                  </motion.article>
+                );
+              })}
             </div>
           </div>
         )}
 
         {route === "course" && selectedCourse && (
           <div>
-            <button onClick={() => go("courses")} className="text-sm mb-4">
-              ← Back to courses
+            <button
+              onClick={() => go("courses")}
+              className="text-xs sm:text-sm mb-4 text-slate-400 hover:text-white flex items-center gap-1 transition"
+            >
+              ← Kembali ke daftar kursus
             </button>
-            <div className="rounded-2xl p-6 bg-white/5 border border-white/8 backdrop-blur">
-              <h2 className="text-2xl font-bold">{selectedCourse.title}</h2>
-              <div className="text-sm text-slate-300 mt-2">
-                {selectedCourse.level} • {selectedCourse.hours} hours
-              </div>
-              <p className="mt-4 text-slate-300">
-                This course covers: {selectedCourse.desc}. You will build a
-                project and get mentor feedback. The curriculum is split into
-                weekly milestones with quizzes and projects.
-              </p>
-              <div className="mt-6 flex gap-3">
-                <button
-                  onClick={() => {
-                    if (currentUser) {
-                      // Enroll user in course
-                      enrollUserInCourse(currentUser.id, selectedCourse.id);
+            <div className="rounded-lg sm:rounded-2xl p-4 sm:p-6 lg:p-8 bg-gradient-to-br from-white/8 to-white/3 border border-white/8 backdrop-blur">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+                <div className="lg:col-span-2">
+                  <h2 className="text-2xl sm:text-3xl font-bold">
+                    {selectedCourse.title}
+                  </h2>
+                  <div className="flex flex-wrap gap-2 sm:gap-3 mt-3 text-xs sm:text-sm text-slate-300">
+                    <span className="px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300">
+                      {selectedCourse.level}
+                    </span>
+                    <span className="px-3 py-1 rounded-full bg-fuchsia-500/20 text-fuchsia-300">
+                      {selectedCourse.hours} jam
+                    </span>
+                    <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300">
+                      ⭐ 4.8 • 1234 siswa
+                    </span>
+                  </div>
+                  <p className="mt-4 sm:mt-6 text-slate-300 text-sm sm:text-base leading-relaxed">
+                    Kursus komprehensif yang dirancang untuk membawa Anda dari
+                    pemula hingga mahir. Anda akan belajar{" "}
+                    {selectedCourse.desc.toLowerCase()} melalui video
+                    berkualitas tinggi, coding exercises, dan project
+                    real-world.
+                  </p>
 
-                      // Update currentUser state with new enrolled courses
-                      const updatedUser = { ...currentUser };
-                      if (!updatedUser.enrolledCourses) {
-                        updatedUser.enrolledCourses = [];
-                      }
-                      if (
-                        !updatedUser.enrolledCourses.includes(selectedCourse.id)
-                      ) {
-                        updatedUser.enrolledCourses.push(selectedCourse.id);
-                      }
-                      setCurrentUser(updatedUser);
-                      localStorage.setItem(
-                        "webdev_currentUser",
-                        JSON.stringify(updatedUser)
-                      );
+                  <div className="mt-6 sm:mt-8">
+                    <h3 className="text-base sm:text-lg font-semibold mb-4">
+                      Yang akan Anda Pelajari
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                      {[
+                        "✓ Konsep fundamental dengan penjelasan mendalam",
+                        "✓ Best practices industri dan coding standards",
+                        "✓ Project-based learning dengan skenario real",
+                        "✓ Code review dari mentor berpengalaman",
+                        "✓ Debugging dan problem-solving techniques",
+                        "✓ Sertifikat yang diakui industri",
+                      ].map((item, idx) => (
+                        <div
+                          key={idx}
+                          className="text-slate-300 flex items-start gap-2 text-xs sm:text-sm leading-relaxed"
+                        >
+                          <span className="text-emerald-400">
+                            {item.split("✓")[0]}✓
+                          </span>
+                          <span>{item.split("✓")[1]}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
 
-                      // Navigate to learning page
-                      go("course-learn", { courseId: selectedCourse.id });
-                    } else {
-                      go("auth");
-                    }
-                  }}
-                  className="px-4 py-2 bg-gradient-to-r from-indigo-500 to-fuchsia-500 rounded-xl"
-                >
-                  Enroll
-                </button>
-                <button
-                  className="px-4 py-2 border rounded-xl"
-                  onClick={() => go("courses")}
-                >
-                  Back
-                </button>
+                <div className="lg:col-span-1">
+                  <motion.div
+                    initial={{ y: -6 }}
+                    animate={{ y: [-6, 6, -6] }}
+                    transition={{ duration: 6, repeat: Infinity }}
+                    className="rounded-lg sm:rounded-2xl p-4 sm:p-6 bg-gradient-to-br from-indigo-500/20 to-fuchsia-500/20 border border-white/10 sticky top-4 sm:top-20"
+                  >
+                    <div className="text-center">
+                      <div className="text-2xl sm:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-fuchsia-400">
+                        {currentUser ? "Terdaftar" : "Rp 499.000"}
+                      </div>
+                      {!currentUser && (
+                        <div className="text-xs text-slate-400 mt-1">
+                          Atau coba 7 hari gratis
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="mt-4 sm:mt-6 space-y-2 sm:space-y-3">
+                      <button
+                        onClick={() => {
+                          if (currentUser) {
+                            enrollUserInCourse(
+                              currentUser.id,
+                              selectedCourse.id
+                            );
+                            const updatedUser = { ...currentUser };
+                            if (!updatedUser.enrolledCourses)
+                              updatedUser.enrolledCourses = [];
+                            if (
+                              !updatedUser.enrolledCourses.includes(
+                                selectedCourse.id
+                              )
+                            ) {
+                              updatedUser.enrolledCourses.push(
+                                selectedCourse.id
+                              );
+                            }
+                            setCurrentUser(updatedUser);
+                            localStorage.setItem(
+                              "webdev_currentUser",
+                              JSON.stringify(updatedUser)
+                            );
+                            go("course-learn", { courseId: selectedCourse.id });
+                          } else {
+                            go("auth");
+                          }
+                        }}
+                        className="w-full px-4 py-3 bg-gradient-to-r from-indigo-500 to-fuchsia-500 rounded-lg sm:rounded-xl font-semibold text-white hover:shadow-lg transition text-sm sm:text-base"
+                      >
+                        {currentUser
+                          ? "Mulai Belajar Sekarang"
+                          : "Mulai Gratis"}
+                      </button>
+
+                      <button
+                        className="w-full px-4 py-3 border border-white/20 rounded-lg sm:rounded-xl font-medium hover:bg-white/5 transition text-sm sm:text-base"
+                        onClick={() => go("courses")}
+                      >
+                        Kembali
+                      </button>
+                    </div>
+
+                    <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-white/10 space-y-2 text-xs sm:text-sm text-slate-400">
+                      <div>✓ Akses seumur hidup</div>
+                      <div>✓ Download materi & sertifikat</div>
+                      <div>✓ Akses komunitas</div>
+                      <div>✓ 30 hari garansi uang kembali</div>
+                    </div>
+                  </motion.div>
+                </div>
               </div>
             </div>
           </div>
@@ -763,25 +902,31 @@ export default function WebDevApp() {
 
         {route === "features" && (
           <div>
-            <h3 className="text-2xl font-bold mb-6">
+            <h3 className="text-2xl sm:text-3xl font-bold mb-6">
               Kenapa Pilih WebDev Academy?
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="p-6 rounded-2xl bg-white/4 border border-white/6">
-                <h4 className="font-semibold">Mentor Berpengalaman</h4>
-                <p className="mt-2 text-sm text-slate-300">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              <div className="p-4 sm:p-6 rounded-lg sm:rounded-2xl bg-white/4 border border-white/6 hover:bg-white/6 transition">
+                <h4 className="font-semibold text-base sm:text-lg">
+                  Mentor Berpengalaman
+                </h4>
+                <p className="mt-2 text-xs sm:text-sm text-slate-300 leading-relaxed">
                   Sesi live, code review, dan feedback langsung.
                 </p>
               </div>
-              <div className="p-6 rounded-2xl bg-white/4 border border-white/6">
-                <h4 className="font-semibold">Proyek Nyata</h4>
-                <p className="mt-2 text-sm text-slate-300">
+              <div className="p-4 sm:p-6 rounded-lg sm:rounded-2xl bg-white/4 border border-white/6 hover:bg-white/6 transition">
+                <h4 className="font-semibold text-base sm:text-lg">
+                  Proyek Nyata
+                </h4>
+                <p className="mt-2 text-xs sm:text-sm text-slate-300 leading-relaxed">
                   Bangun produk riil yang bisa dimasukkan ke portfolio.
                 </p>
               </div>
-              <div className="p-6 rounded-2xl bg-white/4 border border-white/6">
-                <h4 className="font-semibold">Komunitas</h4>
-                <p className="mt-2 text-sm text-slate-300">
+              <div className="p-4 sm:p-6 rounded-lg sm:rounded-2xl bg-white/4 border border-white/6 hover:bg-white/6 transition">
+                <h4 className="font-semibold text-base sm:text-lg">
+                  Komunitas
+                </h4>
+                <p className="mt-2 text-xs sm:text-sm text-slate-300 leading-relaxed">
                   Akses ke Discord, pairing session, dan job board.
                 </p>
               </div>
@@ -797,6 +942,15 @@ export default function WebDevApp() {
           />
         )}
 
+        {route === "dashboard" && currentUser && (
+          <UserDashboard
+            currentUser={currentUser}
+            dark={dark}
+            onClose={() => go("home")}
+            onNavigate={go}
+          />
+        )}
+
         {route === "admin" && (
           <AdminLoginPage
             dark={dark}
@@ -806,15 +960,17 @@ export default function WebDevApp() {
         )}
       </main>
 
-      <div className="rounded-3xl p-8 bg-gradient-to-r from-indigo-700/40 to-fuchsia-700/30 border border-white/6 backdrop-blur shadow-2xl max-w-7xl mx-auto px-6 py-12 my-12">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-          <div>
-            <div className="text-2xl font-bold">Bergabung Sekarang</div>
-            <div className="text-slate-300 mt-2">
+      <div className="rounded-xl sm:rounded-2xl lg:rounded-3xl p-4 sm:p-6 lg:p-8 bg-gradient-to-r from-indigo-700/40 to-fuchsia-700/30 border border-white/6 backdrop-blur shadow-2xl max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 lg:py-12 my-6 sm:my-8 lg:my-12">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
+          <div className="text-center sm:text-left">
+            <div className="text-xl sm:text-2xl font-bold">
+              Bergabung Sekarang
+            </div>
+            <div className="text-xs sm:text-base text-slate-300 mt-2">
               Coba gratis 7 hari — akses penuh ke semua kursus dan komunitas.
             </div>
           </div>
-          <div>
+          <div className="w-full sm:w-auto">
             <button
               onClick={() => {
                 if (currentUser) {
@@ -823,7 +979,7 @@ export default function WebDevApp() {
                   go("auth");
                 }
               }}
-              className="px-6 py-3 rounded-2xl bg-white text-slate-900 font-bold hover:shadow-lg transition"
+              className="w-full sm:w-auto px-6 py-3 rounded-lg sm:rounded-xl lg:rounded-2xl bg-white text-slate-900 font-bold hover:shadow-lg transition text-sm sm:text-base"
             >
               Mulai Free Trial
             </button>
@@ -831,19 +987,41 @@ export default function WebDevApp() {
         </div>
       </div>
 
-      <footer className="relative z-10 mt-12 border-t border-white/6 py-8">
-        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between text-sm text-slate-400">
+      <footer className="relative z-10 mt-12 border-t border-white/6 py-6 sm:py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between text-xs sm:text-sm text-slate-400 gap-4 sm:gap-0">
           <div>© {new Date().getFullYear()} WebDev Academy</div>
-          <div className="flex gap-4">
-            Terms · Privacy · Contact
+          <div className="flex gap-3 sm:gap-4 items-center justify-center sm:justify-start flex-wrap">
+            <button
+              onClick={() => go("home")}
+              className="hover:text-white transition"
+            >
+              Terms
+            </button>
+            <span>·</span>
+            <button
+              onClick={() => go("home")}
+              className="hover:text-white transition"
+            >
+              Privacy
+            </button>
+            <span>·</span>
+            <button
+              onClick={() => go("home")}
+              className="hover:text-white transition"
+            >
+              Contact
+            </button>
             {!adminUser && (
-              <button
-                onClick={() => go("admin")}
-                className="text-xs text-slate-500 hover:text-slate-300"
-                title="Admin"
-              >
-                ⚙️
-              </button>
+              <>
+                <span>·</span>
+                <button
+                  onClick={() => go("admin")}
+                  className="text-xs text-slate-500 hover:text-slate-300 transition"
+                  title="Admin"
+                >
+                  ⚙️
+                </button>
+              </>
             )}
           </div>
         </div>

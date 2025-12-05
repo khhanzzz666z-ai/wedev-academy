@@ -1,31 +1,32 @@
-import mongoose from "mongoose";
+import { DataTypes } from "sequelize";
+import sequelize from "../config/sequelize.js";
 
-const enrollmentSchema = new mongoose.Schema(
+const Enrollment = sequelize.define(
+  "Enrollment",
   {
+    id: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      autoIncrement: true,
+      primaryKey: true,
+    },
     userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: false,
     },
     courseId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Course",
-      required: true,
+      type: DataTypes.STRING,
+      allowNull: false,
     },
-    completedLessons: [String],
+    completedLessons: {
+      type: DataTypes.JSON,
+      defaultValue: [],
+    },
     progress: {
-      type: Number,
-      default: 0,
-    },
-    enrolledAt: {
-      type: Date,
-      default: Date.now,
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
     },
   },
   { timestamps: true }
 );
 
-// Ensure unique enrollment (user can't enroll twice in same course)
-enrollmentSchema.index({ userId: 1, courseId: 1 }, { unique: true });
-
-export default mongoose.model("Enrollment", enrollmentSchema);
+export default Enrollment;

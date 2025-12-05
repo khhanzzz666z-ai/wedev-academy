@@ -55,34 +55,81 @@ export const initializeDatabase = () => {
         lessons: [
           {
             id: "lesson-1-1",
-            title: "Introduction to HTML",
+            title: "Pengenalan HTML - Struktur Dasar Web",
+            module: "🏗️ Struktur Web",
             content:
-              "Learn the basics of HTML, the foundation of web development.",
+              "Pelajari dasar HTML, fondasi dari web development. Membuat struktur halaman yang semantik dan accessibility-friendly.",
             duration: 45,
             videoUrl: "#",
             completed: false,
           },
           {
             id: "lesson-1-2",
-            title: "CSS Styling Fundamentals",
-            content: "Master CSS for beautiful and responsive designs.",
+            title: "CSS Styling Fundamentals - Desain Indah",
+            module: "🎨 Styling & Layout",
+            content:
+              "Kuasai CSS untuk desain yang indah dan responsif. Flexbox, Grid, dan animasi CSS modern.",
             duration: 60,
             videoUrl: "#",
             completed: false,
           },
           {
             id: "lesson-1-3",
-            title: "JavaScript Basics",
-            content: "Learn JavaScript programming essentials.",
+            title: "JavaScript Basics - Interaktivitas & Logic",
+            module: "⚙️ Programming Fundamentals",
+            content:
+              "Pelajari pemrograman JavaScript. Variables, functions, loops, dan DOM manipulation.",
             duration: 90,
             videoUrl: "#",
             completed: false,
           },
           {
-            id: "lesson-1-4",
+            id: "lesson-2-1",
+            title: "Flexbox Layout - Layout Fleksibel Modern",
+            module: "🎨 Advanced Layout",
+            content:
+              "Master Flexbox untuk layout 1D yang powerful. Flex container, items, dan responsive design.",
+            duration: 50,
+            videoUrl: "#",
+            completed: false,
+          },
+          {
+            id: "lesson-2-2",
+            title: "CSS Grid - Layout 2D yang Powerful",
+            module: "🎨 Advanced Layout",
+            content:
+              "Pelajari CSS Grid untuk layout 2D yang kompleks. Template, gaps, dan real-world examples.",
+            duration: 55,
+            videoUrl: "#",
+            completed: false,
+          },
+          {
+            id: "lesson-3-1",
+            title: "Responsive Design & Mobile-First",
+            module: "📱 Modern Web Design",
+            content:
+              "Buat website yang responsif di semua device. Media queries, breakpoints, dan mobile-first approach.",
+            duration: 45,
+            videoUrl: "#",
+            completed: false,
+          },
+          {
+            id: "lesson-react-1",
             title: "React Introduction",
-            content: "Get started with React and component-based architecture.",
+            module: "⚛️ Framework Modern",
+            content:
+              "Mulai dengan React dan component-based architecture. Hooks, state management, dan lifecycle.",
             duration: 75,
+            videoUrl: "#",
+            completed: false,
+          },
+          {
+            id: "lesson-react-2",
+            title: "Advanced React Patterns",
+            module: "⚛️ Framework Modern",
+            content:
+              "Pelajari Custom Hooks, Context API, dan Performance Optimization.",
+            duration: 85,
             videoUrl: "#",
             completed: false,
           },
@@ -102,7 +149,9 @@ export const initializeDatabase = () => {
           {
             id: "lesson-2-1",
             title: "Node.js Fundamentals",
-            content: "Introduction to Node.js runtime and environment setup.",
+            module: "🔧 Runtime & Environment",
+            content:
+              "Pengenalan Node.js runtime dan environment setup. Event loop, streams, dan buffer.",
             duration: 50,
             videoUrl: "#",
             completed: false,
@@ -110,7 +159,9 @@ export const initializeDatabase = () => {
           {
             id: "lesson-2-2",
             title: "Express.js Framework",
-            content: "Build web applications with Express.js.",
+            module: "🚀 Web Framework",
+            content:
+              "Bangun web applications dengan Express.js. Routing, middleware, dan error handling.",
             duration: 80,
             videoUrl: "#",
             completed: false,
@@ -118,7 +169,9 @@ export const initializeDatabase = () => {
           {
             id: "lesson-2-3",
             title: "RESTful APIs",
-            content: "Design and implement RESTful APIs.",
+            module: "🔌 API Development",
+            content:
+              "Desain dan implementasikan RESTful APIs. HTTP methods, status codes, dan best practices.",
             duration: 100,
             videoUrl: "#",
             completed: false,
@@ -126,8 +179,20 @@ export const initializeDatabase = () => {
           {
             id: "lesson-2-4",
             title: "Authentication & Security",
-            content: "Implement secure authentication systems.",
+            module: "🔐 Security",
+            content:
+              "Implementasikan sistem autentikasi yang aman. JWT, password hashing, dan CORS.",
             duration: 85,
+            videoUrl: "#",
+            completed: false,
+          },
+          {
+            id: "lesson-2-5",
+            title: "Database Integration",
+            module: "📊 Database",
+            content:
+              "Integrasikan database dengan Express. MySQL, MongoDB, dan query optimization.",
+            duration: 95,
             videoUrl: "#",
             completed: false,
           },
@@ -146,41 +211,61 @@ export const initializeDatabase = () => {
         lessons: [
           {
             id: "lesson-3-1",
-            title: "Project Planning",
-            content: "Plan and design a complete fullstack application.",
+            title: "Project Planning & Architecture",
+            module: "📋 Planning",
+            content:
+              "Rencanakan dan desain aplikasi fullstack lengkap. Database design, API structure, dan UI/UX planning.",
             duration: 60,
             videoUrl: "#",
             completed: false,
           },
           {
             id: "lesson-3-2",
-            title: "Database Design",
-            content: "Design efficient database schemas.",
+            title: "Database Schema Design",
+            module: "📊 Database",
+            content:
+              "Desain schema database yang efisien. Normalization, relationships, dan indexing.",
             duration: 75,
             videoUrl: "#",
             completed: false,
           },
           {
             id: "lesson-3-3",
-            title: "API Development",
-            content: "Develop robust backend APIs.",
+            title: "API Development with Express",
+            module: "🚀 Backend",
+            content:
+              "Kembangkan robust backend APIs. CRUD operations, validation, dan error handling.",
             duration: 90,
             videoUrl: "#",
             completed: false,
           },
           {
             id: "lesson-3-4",
-            title: "Frontend Integration",
-            content: "Integrate frontend with backend APIs.",
+            title: "Frontend Integration & State Management",
+            module: "⚛️ Frontend",
+            content:
+              "Integrasikan frontend dengan backend APIs. Redux, Context API, dan data fetching.",
             duration: 95,
             videoUrl: "#",
             completed: false,
           },
           {
             id: "lesson-3-5",
-            title: "Deployment",
-            content: "Deploy your fullstack application.",
-            duration: 70,
+            title: "Testing & Quality Assurance",
+            module: "✅ Testing",
+            content:
+              "Implementasikan unit testing, integration testing, dan E2E testing.",
+            duration: 80,
+            videoUrl: "#",
+            completed: false,
+          },
+          {
+            id: "lesson-3-6",
+            title: "Deployment & DevOps",
+            module: "🚀 Deployment",
+            content:
+              "Deploy aplikasi fullstack Anda. Docker, CI/CD pipelines, dan monitoring.",
+            duration: 85,
             videoUrl: "#",
             completed: false,
           },
@@ -199,16 +284,20 @@ export const initializeDatabase = () => {
         lessons: [
           {
             id: "lesson-4-1",
-            title: "Introduction to DevOps",
-            content: "Understand DevOps principles and practices.",
+            title: "DevOps Principles & Best Practices",
+            module: "🔧 Concepts",
+            content:
+              "Pahami prinsip DevOps dan best practices. Collaboration, automation, dan continuous improvement.",
             duration: 40,
             videoUrl: "#",
             completed: false,
           },
           {
             id: "lesson-4-2",
-            title: "Docker Basics",
-            content: "Containerize applications with Docker.",
+            title: "Docker Containerization",
+            module: "🐳 Containerization",
+            content:
+              "Kontainerisasi aplikasi dengan Docker. Dockerfile, images, containers, dan registries.",
             duration: 65,
             videoUrl: "#",
             completed: false,
@@ -216,8 +305,20 @@ export const initializeDatabase = () => {
           {
             id: "lesson-4-3",
             title: "CI/CD Pipelines",
-            content: "Set up continuous integration and deployment.",
+            module: "🚀 Automation",
+            content:
+              "Setup continuous integration dan deployment. GitHub Actions, Jenkins, dan GitLab CI.",
             duration: 80,
+            videoUrl: "#",
+            completed: false,
+          },
+          {
+            id: "lesson-4-4",
+            title: "Infrastructure & Monitoring",
+            module: "📊 Infrastructure",
+            content:
+              "Manage infrastructure dan monitoring. Kubernetes basics, logging, dan alerting.",
+            duration: 70,
             videoUrl: "#",
             completed: false,
           },

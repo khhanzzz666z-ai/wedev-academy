@@ -1,42 +1,30 @@
-import mongoose from "mongoose";
+import { DataTypes } from "sequelize";
+import sequelize from "../config/sequelize.js";
 
-const lessonSchema = new mongoose.Schema({
-  id: String,
-  title: String,
-  content: String,
-  duration: Number,
-  videoUrl: String,
-  completed: {
-    type: Boolean,
-    default: false,
-  },
-});
-
-const courseSchema = new mongoose.Schema(
+const Course = sequelize.define(
+  "Course",
   {
     id: {
-      type: String,
-      unique: true,
-      required: true,
+      type: DataTypes.STRING,
+      primaryKey: true,
     },
     title: {
-      type: String,
-      required: true,
+      type: DataTypes.STRING,
+      allowNull: false,
     },
-    level: String,
-    hours: Number,
-    desc: String,
-    image: String,
-    instructor: String,
-    rating: Number,
-    students: Number,
-    lessons: [lessonSchema],
-    createdAt: {
-      type: Date,
-      default: Date.now,
+    level: DataTypes.STRING,
+    hours: DataTypes.INTEGER,
+    desc: DataTypes.TEXT,
+    image: DataTypes.STRING,
+    instructor: DataTypes.STRING,
+    rating: DataTypes.FLOAT,
+    students: DataTypes.INTEGER,
+    lessons: {
+      type: DataTypes.JSON,
+      defaultValue: [],
     },
   },
   { timestamps: true }
 );
 
-export default mongoose.model("Course", courseSchema);
+export default Course;

@@ -1,55 +1,46 @@
-import mongoose from "mongoose";
+import { DataTypes } from "sequelize";
+import sequelize from "../config/sequelize.js";
 
-const userSchema = new mongoose.Schema(
+const User = sequelize.define(
+  "User",
   {
+    id: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      autoIncrement: true,
+      primaryKey: true,
+    },
     fullName: {
-      type: String,
-      required: true,
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     email: {
-      type: String,
-      required: true,
+      type: DataTypes.STRING,
+      allowNull: false,
       unique: true,
-      lowercase: true,
+      validate: { isEmail: true },
     },
     password: {
-      type: String,
-      default: null,
+      type: DataTypes.STRING,
+      allowNull: true,
     },
     emailVerified: {
-      type: Boolean,
-      default: false,
-    },
-    verificationCode: {
-      type: String,
-      default: null,
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
     },
     provider: {
-      type: String,
-      enum: ["email", "google", "github"],
-      default: "email",
+      type: DataTypes.ENUM("email", "google", "github"),
+      defaultValue: "email",
     },
-    enrolledCourses: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Course",
-      },
-    ],
     trialStatus: {
-      type: String,
-      enum: ["active", "expired"],
-      default: "active",
+      type: DataTypes.ENUM("active", "expired"),
+      defaultValue: "active",
     },
     trialEndDate: {
-      type: Date,
-      default: () => new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-    },
-    createdAt: {
-      type: Date,
-      default: Date.now,
+      type: DataTypes.DATE,
+      defaultValue: () => new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     },
   },
   { timestamps: true }
 );
 
-export default mongoose.model("User", userSchema);
+export default User;

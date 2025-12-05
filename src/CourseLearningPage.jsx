@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import EnhancedVideoPlayer from "./EnhancedVideoPlayer";
 import {
   getCourseById,
   getLessonByCourseAndLessonId,
@@ -18,6 +19,19 @@ export default function CourseLearningPage({
   const [selectedLessonId, setSelectedLessonId] = useState(null);
   const [progress, setProgress] = useState(0);
   const [loading, setLoading] = useState(true);
+
+  // Grouping lessons by module
+  const getLessonsByModule = (lessons) => {
+    const grouped = {};
+    lessons.forEach((lesson) => {
+      const module = lesson.module || "Lainnya";
+      if (!grouped[module]) {
+        grouped[module] = [];
+      }
+      grouped[module].push(lesson);
+    });
+    return grouped;
+  };
 
   useEffect(() => {
     const courseData = getCourseById(courseId);
@@ -95,20 +109,36 @@ export default function CourseLearningPage({
           dark ? "border-slate-800" : "border-slate-200"
         } sticky top-0 z-10 backdrop-blur`}
       >
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <button
-            onClick={onBack}
-            className="flex items-center gap-2 text-sm hover:opacity-70 transition"
-          >
-            ← Kembali ke Kursus
-          </button>
-
-          <div className="text-center flex-1">
-            <h1 className="text-xl font-bold">{course.title}</h1>
-            <p className="text-xs text-slate-500">{currentLesson.title}</p>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-2 sm:gap-4">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={onBack}
+              className="flex items-center gap-1 text-xs sm:text-sm hover:opacity-70 transition px-2 sm:px-3 py-2 rounded-lg hover:bg-white/5"
+            >
+              ← Kursus
+            </button>
+            <span className="text-slate-500 hidden sm:inline">|</span>
+            <button
+              onClick={() => {
+                // Navigate to home - you may need to pass this function from parent
+                window.location.href = "/";
+              }}
+              className="hidden sm:flex items-center gap-1 text-xs sm:text-sm hover:opacity-70 transition px-2 sm:px-3 py-2 rounded-lg hover:bg-white/5"
+            >
+              🏠 Home
+            </button>
           </div>
 
-          <div className="text-sm text-right">
+          <div className="text-center flex-1 min-w-0">
+            <h1 className="text-base sm:text-xl font-bold truncate">
+              {course.title}
+            </h1>
+            <p className="text-xs text-slate-500 truncate">
+              {currentLesson.title}
+            </p>
+          </div>
+
+          <div className="text-xs sm:text-sm text-right">
             <div className="font-semibold">{progress}%</div>
             <div className="text-xs text-slate-500">Selesai</div>
           </div>
@@ -122,31 +152,24 @@ export default function CourseLearningPage({
           animate={{ opacity: 1, y: 0 }}
           className="lg:col-span-2"
         >
-          {/* Video Player Placeholder */}
-          <div
-            className={`rounded-2xl overflow-hidden shadow-2xl ${
-              dark ? "bg-slate-800" : "bg-slate-100"
-            } mb-8`}
-          >
-            <div className="aspect-video flex items-center justify-center bg-gradient-to-br from-indigo-600 to-fuchsia-600">
-              <div className="text-center">
-                <div className="text-6xl mb-4">▶️</div>
-                <p className="text-white text-lg font-semibold">
-                  {currentLesson.title}
-                </p>
-                <p className="text-white/80 text-sm mt-2">
-                  {currentLesson.duration} menit
-                </p>
-              </div>
-            </div>
-          </div>
+          {/* Enhanced Video Player */}
+          <EnhancedVideoPlayer
+            lesson={currentLesson}
+            dark={dark}
+            onComplete={() => handleMarkComplete()}
+          />
 
           {/* Lesson Content */}
           <div
-            className={`rounded-2xl p-8 ${
+            className={`rounded-2xl p-8 mt-8 ${
               dark ? "bg-slate-800/50" : "bg-slate-50"
             } border ${dark ? "border-slate-700" : "border-slate-200"}`}
           >
+            {currentLesson.module && (
+              <div className="inline-block mb-4 px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-semibold">
+                {currentLesson.module}
+              </div>
+            )}
             <h2 className="text-2xl font-bold mb-4">{currentLesson.title}</h2>
 
             <p
@@ -279,42 +302,57 @@ export default function CourseLearningPage({
             </div>
           </div>
 
-          {/* Lessons */}
-          <div className="space-y-2 max-h-96 overflow-y-auto">
-            {course.lessons.map((lesson, index) => (
-              <motion.button
-                key={lesson.id}
-                onClick={() => handleSelectLesson(lesson.id)}
-                whileHover={{ x: 4 }}
-                className={`w-full text-left p-3 rounded-lg transition ${
-                  selectedLessonId === lesson.id
-                    ? "bg-indigo-600 text-white"
-                    : `${dark ? "hover:bg-slate-700" : "hover:bg-slate-200"}`
-                }`}
-              >
-                <div className="flex items-start gap-2">
-                  <div className="text-lg mt-0.5">
-                    {lesson.completed ? "✓" : `${index + 1}`}
+          {/* Lessons by Module */}
+          <div className="space-y-4 max-h-96 overflow-y-auto">
+            {Object.entries(getLessonsByModule(course.lessons)).map(
+              ([module, lessons]) => (
+                <div key={module}>
+                  <div className="text-xs font-bold text-indigo-400 mb-2 px-2">
+                    {module}
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-sm leading-tight truncate">
-                      {lesson.title}
-                    </p>
-                    <p
-                      className={`text-xs mt-1 ${
-                        selectedLessonId === lesson.id
-                          ? "text-white/70"
-                          : dark
-                          ? "text-slate-400"
-                          : "text-slate-600"
-                      }`}
-                    >
-                      {lesson.duration} menit
-                    </p>
+                  <div className="space-y-1">
+                    {lessons.map((lesson, index) => (
+                      <motion.button
+                        key={lesson.id}
+                        onClick={() => handleSelectLesson(lesson.id)}
+                        whileHover={{ x: 4 }}
+                        className={`w-full text-left p-2.5 rounded-lg transition text-xs sm:text-sm ${
+                          selectedLessonId === lesson.id
+                            ? "bg-indigo-600 text-white"
+                            : `${
+                                dark
+                                  ? "hover:bg-slate-700/50"
+                                  : "hover:bg-slate-200"
+                              }`
+                        }`}
+                      >
+                        <div className="flex items-start gap-2">
+                          <div className="text-base mt-0.5 flex-shrink-0">
+                            {lesson.completed ? "✅" : "📚"}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-semibold leading-tight truncate">
+                              {lesson.title}
+                            </p>
+                            <p
+                              className={`text-xs mt-0.5 ${
+                                selectedLessonId === lesson.id
+                                  ? "text-white/70"
+                                  : dark
+                                  ? "text-slate-400"
+                                  : "text-slate-600"
+                              }`}
+                            >
+                              ⏱️ {lesson.duration}m
+                            </p>
+                          </div>
+                        </div>
+                      </motion.button>
+                    ))}
                   </div>
                 </div>
-              </motion.button>
-            ))}
+              )
+            )}
           </div>
 
           {/* Course Info */}

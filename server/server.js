@@ -1,5 +1,6 @@
 import express from "express";
-import mongoose from "mongoose";
+import { sequelize, syncDb } from "./models/index.js";
+import { ensureDatabaseExists } from "./config/sequelize.js";
 import cors from "cors";
 import dotenv from "dotenv";
 import authRoutes from "./routes/auth.js";
@@ -16,26 +17,30 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// MongoDB Connection
-let mongoConnected = false;
+// Initialize database and connect
+let mysqlConnected = false;
+app.locals.mysqlConnected = false;
 
-mongoose
-  .connect(process.env.MONGODB_URI)
-  .then(() => {
-    mongoConnected = true;
-    console.log("✓ MongoDB connected");
-  })
-  .catch((err) => {
-    mongoConnected = false;
-    console.log("⚠ MongoDB not available, using local data");
-    console.log("  To connect MongoDB:");
-    console.log("  1. Install MongoDB locally OR");
-    console.log("  2. Use MongoDB Atlas cloud (get free tier at mongodb.com)");
-    console.log("  3. Update MONGODB_URI in .env file");
-  });
+(async () => {
+  try {
+    // Ensure database exists
+    await ensureDatabaseExists();
 
-// Add MongoDB status to app
-app.locals.mongoConnected = mongoConnected;
+    // Try MySQL (Sequelize) connection and sync models
+    await sequelize.authenticate();
+    mysqlConnected = true;
+    app.locals.mysqlConnected = true;
+    console.log("✓ MySQL (Sequelize) connected successfully");
+
+    await syncDb();
+    console.log("✓ Sequelize models synced");
+  } catch (err) {
+    mysqlConnected = false;
+    app.locals.mysqlConnected = false;
+    console.log("⚠ MySQL connection or sync failed (server will still run)");
+    console.log(`  Error: ${err.message}`);
+  }
+})();
 
 // Routes
 app.use("/api/auth", authRoutes);
@@ -46,7 +51,9 @@ app.use("/api/enrollments", enrollmentRoutes);
 app.get("/api/health", (req, res) => {
   res.json({
     status: "Server running",
-    mongodb: mongoConnected ? "connected" : "not connected",
+    db: {
+      mysql: app.locals.mysqlConnected ? "connected" : "not connected",
+    },
     timestamp: new Date(),
   });
 });

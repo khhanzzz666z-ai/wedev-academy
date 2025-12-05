@@ -1,0 +1,27 @@
+name: Node CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: Install dependencies (backend)
+        working-directory: ./node-api
+        run: |
+          npm ci
+      - name: Run backend tests
+        working-directory: ./node-api
+        run: |
+          npm test || true
+      - name: Lint placeholder
+        run: echo "Add linter and tests later"

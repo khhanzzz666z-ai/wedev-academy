@@ -1,9 +1,9 @@
-import Course from "../models/Course.js";
+import Course from "../models/course.js";
 
 // Get all courses
 export const getAllCourses = async (req, res) => {
   try {
-    const courses = await Course.find();
+    const courses = await Course.findAll();
     res.json({ success: true, data: courses });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -14,7 +14,7 @@ export const getAllCourses = async (req, res) => {
 export const getCourseById = async (req, res) => {
   try {
     const { id } = req.params;
-    const course = await Course.findOne({ id });
+    const course = await Course.findByPk(id);
 
     if (!course) {
       return res
@@ -33,17 +33,23 @@ export const markLessonComplete = async (req, res) => {
   try {
     const { courseId, lessonId } = req.body;
 
-    const course = await Course.findOneAndUpdate(
-      { id: courseId, "lessons.id": lessonId },
-      { $set: { "lessons.$.completed": true } },
-      { new: true }
-    );
-
+    const course = await Course.findByPk(courseId);
     if (!course) {
       return res
         .status(404)
-        .json({ success: false, message: "Course or lesson not found" });
+        .json({ success: false, message: "Course not found" });
     }
+
+    const lessons = course.lessons || [];
+    const idx = lessons.findIndex((l) => l.id === lessonId);
+    if (idx === -1) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Lesson not found" });
+    }
+
+    lessons[idx].completed = true;
+    await course.update({ lessons });
 
     res.json({
       success: true,
@@ -59,7 +65,7 @@ export const markLessonComplete = async (req, res) => {
 export const getCourseProgress = async (req, res) => {
   try {
     const { courseId } = req.params;
-    const course = await Course.findOne({ id: courseId });
+    const course = await Course.findByPk(courseId);
 
     if (!course) {
       return res
@@ -92,7 +98,7 @@ export const getCourseProgress = async (req, res) => {
 export const initializeCourses = async (req, res) => {
   try {
     // Check if courses exist
-    const existingCourses = await Course.countDocuments();
+    const existingCourses = await Course.count();
     if (existingCourses > 0) {
       return res.json({
         success: true,
@@ -269,7 +275,7 @@ export const initializeCourses = async (req, res) => {
       },
     ];
 
-    await Course.insertMany(courses);
+    await Promise.all(courses.map((c) => Course.create({ ...c })));
 
     res.json({
       success: true,

@@ -12,17 +12,60 @@ export default function OAuthEmailComponent({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // Validasi email akun asli (domain terkenal)
+  const validateRealEmail = (emailInput) => {
+    const realEmailDomains = [
+      "gmail.com",
+      "yahoo.com",
+      "outlook.com",
+      "hotmail.com",
+      "icloud.com",
+      "mail.com",
+      "protonmail.com",
+      "tutanota.com",
+      "yandex.com",
+    ];
+
+    const domain = emailInput.split("@")[1]?.toLowerCase();
+    return realEmailDomains.includes(domain);
+  };
+
+  // Validasi nama yang lebih ketat
+  const validateRealName = (name) => {
+    // Minimal 2 kata, tidak ada angka di awal
+    const parts = name.trim().split(/\s+/);
+    return (
+      parts.length >= 2 &&
+      parts.every((p) => p.length >= 2) &&
+      !/^\d/.test(name)
+    );
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     setError("");
 
     if (!email.trim() || !fullName.trim()) {
-      setError("Email dan nama harus diisi");
+      setError("❌ Email dan nama harus diisi");
       return;
     }
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError("Format email tidak valid");
+      setError("❌ Format email tidak valid");
+      return;
+    }
+
+    if (!validateRealEmail(email)) {
+      setError(
+        "❌ Gunakan email asli (Gmail, Yahoo, Outlook, dll.) bukan email palsu"
+      );
+      return;
+    }
+
+    if (!validateRealName(fullName)) {
+      setError(
+        "❌ Nama harus minimal 2 kata dengan masing-masing minimal 2 karakter (contoh: John Doe)"
+      );
       return;
     }
 
@@ -65,13 +108,16 @@ export default function OAuthEmailComponent({
               type="text"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              placeholder="Masukkan nama Anda"
+              placeholder="contoh: John Doe"
               className={`w-full px-4 py-3 rounded-lg border-2 ${
                 dark
                   ? "bg-slate-800 border-slate-700 text-white placeholder-slate-500"
                   : "bg-white border-slate-200 text-slate-900 placeholder-slate-400"
               } focus:outline-none focus:border-indigo-500`}
             />
+            <p className="text-xs text-slate-400 mt-1">
+              📝 Gunakan nama asli Anda (minimal 2 kata)
+            </p>
           </div>
 
           <div>
@@ -80,13 +126,16 @@ export default function OAuthEmailComponent({
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="email@example.com"
+              placeholder="email@gmail.com"
               className={`w-full px-4 py-3 rounded-lg border-2 ${
                 dark
                   ? "bg-slate-800 border-slate-700 text-white placeholder-slate-500"
                   : "bg-white border-slate-200 text-slate-900 placeholder-slate-400"
               } focus:outline-none focus:border-indigo-500`}
             />
+            <p className="text-xs text-slate-400 mt-1">
+              📧 Gunakan email asli (Gmail, Yahoo, Outlook, dsb.)
+            </p>
           </div>
 
           {error && (

@@ -1,6 +1,6 @@
-import Enrollment from "../models/Enrollment.js";
-import User from "../models/User.js";
-import Course from "../models/Course.js";
+import Enrollment from "../models/enrollment.js";
+import User from "../models/user.js";
+import Course from "../models/course.js";
 
 // Enroll user in course
 export const enrollUserInCourse = async (req, res) => {
@@ -9,7 +9,9 @@ export const enrollUserInCourse = async (req, res) => {
     const userId = req.userId;
 
     // Check if already enrolled
-    const existingEnrollment = await Enrollment.findOne({ userId, courseId });
+    const existingEnrollment = await Enrollment.findOne({
+      where: { userId, courseId },
+    });
     if (existingEnrollment) {
       return res
         .status(400)
@@ -25,9 +27,8 @@ export const enrollUserInCourse = async (req, res) => {
     });
 
     // Add course to user's enrolled courses
-    await User.findByIdAndUpdate(userId, {
-      $addToSet: { enrolledCourses: courseId },
-    });
+    // No direct relation for enrolledCourses in Sequelize models; skip or implement relation later
+    // Optionally, we could create a join table. For now, keep enrollment as the source of truth.
 
     res.status(201).json({
       success: true,
@@ -44,7 +45,14 @@ export const getUserEnrollments = async (req, res) => {
   try {
     const userId = req.userId;
 
-    const enrollments = await Enrollment.find({ userId }).populate("courseId");
+    const enrollments = await Enrollment.findAll({ where: { userId } });
+    // Attach course data
+    const result = await Promise.all(
+      enrollments.map(async (e) => {
+        const course = await Course.findByPk(e.courseId);
+        return { ...e.dataValues, course };
+      })
+    );
 
     res.json({ success: true, data: enrollments });
   } catch (error) {
@@ -58,11 +66,18 @@ export const markLessonComplete = async (req, res) => {
     const { courseId, lessonId } = req.body;
     const userId = req.userId;
 
-    const enrollment = await Enrollment.findOneAndUpdate(
-      { userId, courseId },
-      { $addToSet: { completedLessons: lessonId } },
-      { new: true }
-    );
+    const enrollment = await Enrollment.findOne({
+      where: { userId, courseId },
+    });
+    if (!enrollment) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Enrollment not found" });
+    }
+
+    const completed = enrollment.completedLessons || [];
+    if (!completed.includes(lessonId)) completed.push(lessonId);
+    await enrollment.update({ completedLessons: completed });
 
     if (!enrollment) {
       return res
@@ -71,11 +86,16 @@ export const markLessonComplete = async (req, res) => {
     }
 
     // Also mark in course
-    const course = await Course.findByIdAndUpdate(
-      courseId,
-      { $set: { "lessons.$[elem].completed": true } },
-      { arrayFilters: [{ "elem.id": lessonId }], new: true }
-    );
+    // Also mark in course JSON
+    const course = await Course.findByPk(courseId);
+    if (course) {
+      const lessons = course.lessons || [];
+      const idx = lessons.findIndex((l) => l.id === lessonId);
+      if (idx !== -1) {
+        lessons[idx].completed = true;
+        await course.update({ lessons });
+      }
+    }
 
     res.json({
       success: true,
@@ -93,7 +113,9 @@ export const getEnrollmentProgress = async (req, res) => {
     const { courseId } = req.params;
     const userId = req.userId;
 
-    const enrollment = await Enrollment.findOne({ userId, courseId });
+    const enrollment = await Enrollment.findOne({
+      where: { userId, courseId },
+    });
 
     if (!enrollment) {
       return res
@@ -101,8 +123,9 @@ export const getEnrollmentProgress = async (req, res) => {
         .json({ success: false, message: "Enrollment not found" });
     }
 
-    const course = await Course.findById(courseId);
-    const totalLessons = course.lessons.length;
+    const course = await Course.findByPk(courseId);
+    const totalLessons =
+      (course && course.lessons && course.lessons.length) || 0;
     const completedLessons = enrollment.completedLessons.length;
     const progress =
       totalLessons > 0

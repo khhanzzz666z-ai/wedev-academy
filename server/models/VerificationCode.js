@@ -1,26 +1,28 @@
-import mongoose from "mongoose";
+import { DataTypes } from "sequelize";
+import sequelize from "../config/sequelize.js";
 
-const verificationCodeSchema = new mongoose.Schema(
+const VerificationCode = sequelize.define(
+  "VerificationCode",
   {
+    id: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      autoIncrement: true,
+      primaryKey: true,
+    },
     email: {
-      type: String,
-      required: true,
-      lowercase: true,
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     code: {
-      type: String,
-      required: true,
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     expiresAt: {
-      type: Date,
-      required: true,
-      default: () => new Date(Date.now() + 10 * 60 * 1000), // 10 minutes
+      type: DataTypes.DATE,
+      allowNull: false,
     },
   },
   { timestamps: true }
 );
 
-// Auto delete expired codes
-verificationCodeSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
-
-export default mongoose.model("VerificationCode", verificationCodeSchema);
+export default VerificationCode;

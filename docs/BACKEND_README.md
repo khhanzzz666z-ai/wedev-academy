@@ -3,6 +3,7 @@
 ## 📋 Quick Start
 
 ### Prerequisites
+
 - Node.js v16+
 - npm atau yarn
 - MongoDB (local atau Atlas cloud)
@@ -39,6 +40,7 @@ npm run dev
 Ada 3 cara setup MongoDB:
 
 ### 1️⃣ MongoDB Atlas (Cloud) - RECOMMENDED ✅
+
 **Gratis, mudah, tanpa install**
 
 1. Buka https://www.mongodb.com/cloud/atlas
@@ -49,6 +51,7 @@ Ada 3 cara setup MongoDB:
 6. Update `.env` dengan URI
 
 **Benefits:**
+
 - ✓ Gratis selamanya (M0 tier)
 - ✓ Tidak perlu install lokal
 - ✓ Accessible dari mana saja
@@ -57,11 +60,13 @@ Ada 3 cara setup MongoDB:
 Lihat detail: [MONGODB_SETUP.md](MONGODB_SETUP.md)
 
 ### 2️⃣ MongoDB Local (Windows/Mac/Linux)
+
 **Untuk development offline**
 
 Lihat setup instructions di [MONGODB_SETUP.md](MONGODB_SETUP.md)
 
 ### 3️⃣ Docker
+
 **Jika sudah install Docker**
 
 ```bash
@@ -73,6 +78,7 @@ docker run -d -p 27017:27017 --name mongodb mongo:latest
 ## 🚀 API Endpoints
 
 ### Auth Endpoints
+
 ```
 POST   /api/auth/register          - Register user
 POST   /api/auth/verify-email      - Verify email dengan code
@@ -82,6 +88,7 @@ GET    /api/auth/profile           - Get user profile (need JWT)
 ```
 
 ### Course Endpoints
+
 ```
 GET    /api/courses                - Get all courses
 GET    /api/courses/:id            - Get course by ID
@@ -91,6 +98,7 @@ GET    /api/courses/:id/progress   - Get course progress
 ```
 
 ### Enrollment Endpoints
+
 ```
 POST   /api/enrollments/enroll     - Enroll user di course
 GET    /api/enrollments/user/:id   - Get user enrollments
@@ -102,11 +110,13 @@ GET    /api/enrollments/:id        - Get enrollment details
 ## 🧪 Testing API
 
 ### Method 1: Postman
+
 1. Import file: `postman_collection.json`
 2. Set base URL: `http://localhost:5000`
 3. Test semua endpoints
 
 ### Method 2: curl
+
 ```bash
 # Register
 curl -X POST http://localhost:5000/api/auth/register \
@@ -121,6 +131,7 @@ curl http://localhost:5000/api/health
 ```
 
 ### Method 3: Frontend Integration
+
 Update React components untuk call API endpoints
 
 ---
@@ -128,6 +139,7 @@ Update React components untuk call API endpoints
 ## 📝 Database Schema
 
 ### Users Collection
+
 ```javascript
 {
   _id: ObjectId,
@@ -146,6 +158,7 @@ Update React components untuk call API endpoints
 ```
 
 ### Courses Collection
+
 ```javascript
 {
   _id: ObjectId,
@@ -172,6 +185,7 @@ Update React components untuk call API endpoints
 ```
 
 ### VerificationCodes Collection
+
 ```javascript
 {
   _id: ObjectId,
@@ -265,19 +279,25 @@ webdev-academy/
 ## 🚨 Troubleshooting
 
 ### MongoDB Connection Error
+
 ```
 Error: querySrv ENOTFOUND _mongodb._tcp.xxx.mongodb.net
 ```
+
 **Solution:**
+
 1. Check MONGODB_URI di `.env` file
 2. Verify username & password benar
 3. Jika local: pastikan MongoDB service running
 
 ### Server not starting
+
 ```
 Error: listen EADDRINUSE :::5000
 ```
+
 **Solution:** Port 5000 sudah digunakan
+
 ```bash
 # Kill process
 lsof -i :5000                 # Mac/Linux
@@ -286,6 +306,7 @@ kill -9 <PID>
 ```
 
 ### JWT Token Issues
+
 Token expire dalam 7 hari
 User harus login ulang atau implement refresh token
 
@@ -294,11 +315,13 @@ User harus login ulang atau implement refresh token
 ## 🔐 Security Notes
 
 ⚠️ **For Development Only:**
+
 - JWT_SECRET should be strong & random
 - Disable CORS restrictions hanya untuk dev
 - Password hashing dengan bcryptjs
 
 **For Production:**
+
 - Use environment-specific .env files
 - Enable HTTPS
 - Restrict CORS ke domain spesifik
@@ -324,7 +347,7 @@ const registerUser = async (fullName, email, password) => {
       fullName,
       email,
       password,
-      confirmPassword: password
+      confirmPassword: password,
     });
     return response.data;
   } catch (error) {
@@ -364,6 +387,7 @@ const enrollCourse = async (userId, courseId, token) => {
 ### Deploy Backend (Node.js + MongoDB)
 
 **Options:**
+
 1. **Railway** - Recommended untuk Vercel users
 2. **Render** - Free tier tersedia
 3. **Heroku** - Classic, tapi paid now
@@ -371,6 +395,7 @@ const enrollCourse = async (userId, courseId, token) => {
 5. **AWS EC2** - Full control
 
 **Steps:**
+
 1. Push ke GitHub
 2. Connect repo ke hosting platform
 3. Set environment variables
@@ -381,6 +406,7 @@ const enrollCourse = async (userId, courseId, token) => {
 ## 📞 Support
 
 Lihat:
+
 - [MONGODB_SETUP.md](MONGODB_SETUP.md) - Detailed MongoDB setup
 - [postman_collection.json](postman_collection.json) - API examples
 - GitHub Issues - Report bugs

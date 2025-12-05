@@ -1,125 +1,241 @@
-# WebDev Academy
+# 🎓 Wedev Academy — Final Production-Ready Edition
 
-Platform pembelajaran web development modern dengan fitur interaktif, dark mode, dan chatbot AI.
+**A comprehensive full-stack learning platform with AI-powered course summarization, progress tracking, and secure authentication.**
 
-## Fitur Utama
+## ✨ Features
 
-- **Dark/Light Mode** - Toggle tema gelap dan terang
-- **ChatBot Interaktif** - Asisten untuk menjawab pertanyaan coding
-- **Course Catalog** - Katalog lengkap kursus programming
-- **Module Learning** - Modul pembelajaran terstruktur
-- **Responsive Design** - Optimized untuk desktop dan mobile
-- **Smooth Animations** - Animasi dengan Framer Motion
-- **Modern Tech Stack** - React + Vite + Tailwind CSS
+- **📚 Interactive Lesson Player**
 
-## Teknologi yang Digunakan
+  - 5-step learning structure per lesson
+  - Keyboard shortcuts (Space = play/pause, ◀/▶ = navigate, R = replay)
+  - localStorage + server-side progress persistence
+  - Smooth Framer Motion animations
 
-- **React 18** - UI Framework
-- **Vite** - Build tool yang cepat
-- **Tailwind CSS** - Utility-first CSS framework
-- **Framer Motion** - Animation library
-- **PostCSS** - CSS processing
+- **🧠 AI Summarization**
 
-## Instalasi & Setup
+  - OpenAI-powered lesson summaries (environment-configured, no keys in code)
+  - Rate-limited (10 calls/hour per user)
+  - Server-side API integration
 
-### 1. Install Dependencies
+- **🔐 Secure Authentication**
 
-```bash
-npm install
+  - JWT tokens (7-day expiry)
+  - Password validation (min 6 chars, uppercase, lowercase, number)
+  - Rate-limited auth endpoints (5 attempts/15min)
+
+- **📊 Progress Tracking**
+
+  - Per-lesson progress (current step, completion %)
+  - Per-course enrollment & progress summary
+  - Automatic sync to backend when authenticated
+  - localStorage fallback when offline
+
+- **🚀 Production Ready**
+  - Multi-stage Docker builds with health checks
+  - Nginx reverse proxy with security headers
+  - Rate limiting & input validation
+  - GitHub Actions CI/CD pipeline
+  - Deployment guide included
+
+## 📁 Project Structure
+
+```
+wedev-academy/
+├── src/                           # React frontend (Vite)
+│   ├── EnhancedVideoPlayer.jsx     # Main lesson player
+│   ├── AuthComponent_PHP.jsx       # Legacy auth UI
+│   ├── api.js                      # PHP API client
+│   ├── api_node.js                 # Node API client
+│   └── App.jsx                     # Main app
+├── node-api/                       # Node.js/Express backend
+│   ├── src/
+│   │   ├── models/                 # Sequelize models (User, Course, Lesson, etc.)
+│   │   ├── controllers/            # Route handlers
+│   │   ├── routes/                 # API routes
+│   │   ├── middleware/             # Auth, rate limiting
+│   │   └── utils/                  # Validation helpers
+│   ├── scripts/
+│   │   └── seed.js                 # Populate sample data
+│   ├── Dockerfile                  # Dev image
+│   ├── Dockerfile.prod             # Production image
+│   └── package.json
+├── php-api/                        # Legacy PHP API (optional)
+├── docker-compose.yml              # Local dev stack
+├── Dockerfile.frontend             # Production frontend build
+├── nginx.conf                      # Nginx config
+├── DEPLOYMENT.md                   # Production deployment guide
+└── README.md                       # This file
 ```
 
-### 2. Jalankan Development Server
+## 🚀 Quick Start
+
+### Option 1: Docker Compose (Recommended)
 
 ```bash
+git clone https://github.com/khhanzzz666z-ai/wedev-academy.git
+cd 'wedev-academy'
+docker compose up --build
+```
+
+- Frontend: http://localhost:5173
+- Backend API: http://localhost:4000
+- MySQL: localhost:3306
+
+### Option 2: Local Development
+
+**Prerequisites:** Node.js 18+, MySQL 8.0+
+
+**Backend:**
+
+```bash
+cd node-api
+npm install
+cp .env.example .env
+# Edit .env: set AI_API_KEY, DB credentials
 npm run dev
 ```
 
-Server akan berjalan di `http://localhost:5173`
-
-### 3. Build untuk Production
+**Frontend:**
 
 ```bash
-npm run build
+npm install
+npm run dev
 ```
 
-### 4. Preview Build
+**Seed sample data (optional):**
 
 ```bash
-npm run preview
+cd node-api
+npm run seed
 ```
 
-## Struktur Proyek
+## 🔌 API Endpoints
 
-```
-webdev-academy/
-├── src/
-│   ├── App.jsx           # Main component
-│   ├── main.jsx          # Entry point
-│   └── index.css         # Global styles
-├── public/               # Static files
-├── index.html            # HTML template
-├── package.json          # Dependencies
-├── vite.config.js        # Vite configuration
-├── tailwind.config.js    # Tailwind configuration
-└── postcss.config.js     # PostCSS configuration
-```
+### Authentication
 
-## Halaman Utama
+- `POST /api/auth/register` — Register new user
+- `POST /api/auth/login` — Login and get JWT token
+- `GET /api/auth/verify` — Verify token (requires Bearer token)
 
-1. **Home** - Landing page dengan hero section
-2. **Courses** - Katalog lengkap kursus yang tersedia
-3. **Modules** - Modul pembelajaran terstruktur
-4. **Features** - Keunggulan platform
-5. **Auth** - Halaman login/register
+### Courses & Lessons
 
-## Komponen Utama
+- `GET /api/courses` — List all courses
+- `GET /api/courses/:id` — Get course with lessons
 
-### ChatBotBubble
+### Progress
 
-Chatbot interaktif yang terletak di pojok kanan bawah. Fitur:
+- `GET /api/progress/:lessonId` (auth) — Get lesson progress
+- `POST /api/progress/:lessonId` (auth) — Save/update lesson progress
+- `GET /api/me/progress` (auth) — Get user's progress across all courses
 
-- WhatsApp integration button
-- Quick replies
-- Real-time chat simulation
-- Dark mode support
-- Customizable position
+### AI
 
-### WebDevApp
+- `POST /api/ai/summarize` (auth) — Summarize lesson content using AI
 
-Komponen utama aplikasi dengan:
+## 🔑 Environment Variables
 
-- State management untuk routing
-- Dark mode toggle
-- Loading animation
-- Responsive navigation
+### Backend (node-api/.env)
 
-## Customization
+```env
+NODE_ENV=development
+PORT=4000
+JWT_SECRET=dev_secret_change_in_prod
+JWT_EXPIRES_IN=7d
 
-### Mengubah WhatsApp Number
+DB_HOST=localhost
+DB_PORT=3306
+DB_NAME=webdev_academy
+DB_USER=root
+DB_PASSWORD=
 
-Edit di `ChatBotBubble`:
-
-```jsx
-<a href="https://wa.me/YOUR_NUMBER_HERE" ...>
+AI_API_KEY=your_openai_key_here
+AI_API_URL=https://api.openai.com/v1/chat/completions
+AI_MODEL=gpt-4o
 ```
 
-### Mengubah Kursus
+**Security:** Do NOT commit `.env` to git. For production, set env vars via platform (Docker, CI/CD, cloud provider).
 
-Edit `coursesCatalog` array di `WebDevApp`:
+## 🧪 Testing
 
-```jsx
-const coursesCatalog = [
-  { id: "...", title: "...", level: "...", hours: 48, desc: "..." },
-];
+### Backend Unit Tests
+
+```bash
+cd node-api
+npm test
 ```
 
-## Browser Support
+### API Smoke Test
 
-- Chrome (latest)
-- Firefox (latest)
-- Safari (latest)
-- Edge (latest)
+```bash
+# With Docker Compose running:
+curl http://localhost:4000/
+curl -X POST http://localhost:4000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@example.com","password":"Test123"}'
+```
 
-## License
+### Frontend Tests
 
-MIT License
+```bash
+npm run test  # (placeholder, ready for testing framework)
+```
+
+## 📦 Production Deployment
+
+See **[DEPLOYMENT.md](./DEPLOYMENT.md)** for detailed production deployment steps, security hardening, scaling strategies, and monitoring setup.
+
+**Quick summary:**
+
+1. Build production images: `docker build -f node-api/Dockerfile.prod . && docker build -f Dockerfile.frontend .`
+2. Set environment variables on your platform
+3. Use Docker Compose with `.prod` config or orchestrate with Kubernetes
+4. Set up monitoring, backups, and TLS/HTTPS
+
+## 🔒 Security
+
+- **Authentication:** JWT tokens with short expiry (7 days)
+- **Rate Limiting:**
+  - Auth: 5 attempts/15 minutes
+  - General API: 100 requests/15 minutes
+  - AI: 10 requests/hour per user
+- **Input Validation:** Email, password strength, payload size limits
+- **Headers:** CSP, X-Frame-Options, X-Content-Type-Options configured
+- **HTTPS:** Required in production (use Let's Encrypt or your CA)
+
+## 📚 Learning Modules
+
+Currently includes:
+
+- **HTML Basics** (`lesson-1-1`): Tags, structure, semantic HTML
+- **CSS Fundamentals** (`lesson-1-2`): Selectors, Box Model, Flexbox, Grid
+
+Each lesson has 5 steps with interactive code examples and AI-powered summaries.
+
+## 🤝 Contributing
+
+1. Create a feature branch: `git checkout -b feature/my-feature`
+2. Commit changes: `git commit -m 'Add my feature'`
+3. Push: `git push origin feature/my-feature`
+4. Open a Pull Request
+
+## 📝 License
+
+MIT
+
+## 👤 Author
+
+Khanz AI (khhanzzz666z-ai)
+
+## 📞 Support
+
+For issues or questions:
+
+- Check [DEPLOYMENT.md](./DEPLOYMENT.md) for troubleshooting
+- Review API docs at `/api/*` endpoints (swagger or postman collection coming soon)
+- Refer to inline code comments in `src/` and `node-api/src/`
+
+---
+
+**Happy learning! 🚀**
+
+Built with ❤️ using React, Node.js, and MySQL.

@@ -1,5 +1,5 @@
-import User from "../models/User.js";
-import VerificationCode from "../models/VerificationCode.js";
+import User from "../models/user.js";
+import VerificationCode from "../models/verificationCode.js";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 
@@ -13,7 +13,7 @@ export const sendVerificationEmail = async (email, fullName) => {
   const code = generateVerificationCode();
 
   try {
-    // Save verification code to DB
+    // Save verification code to DB (Sequelize)
     await VerificationCode.create({
       email,
       code,
@@ -47,8 +47,10 @@ export const register = async (req, res) => {
         .json({ success: false, message: "Passwords don't match" });
     }
 
-    // Check if user exists
-    const existingUser = await User.findOne({ email: email.toLowerCase() });
+    // Check if user exists (Sequelize)
+    const existingUser = await User.findOne({
+      where: { email: email.toLowerCase() },
+    });
     if (existingUser) {
       return res
         .status(400)
@@ -95,10 +97,9 @@ export const verifyEmail = async (req, res) => {
         .json({ success: false, message: "Email and code required" });
     }
 
-    // Find verification code
+    // Find verification code (Sequelize)
     const verCode = await VerificationCode.findOne({
-      email: email.toLowerCase(),
-      code,
+      where: { email: email.toLowerCase(), code },
     });
 
     if (!verCode) {
@@ -108,14 +109,17 @@ export const verifyEmail = async (req, res) => {
     }
 
     // Update user
-    const user = await User.findOneAndUpdate(
-      { email: email.toLowerCase() },
-      { emailVerified: true, verificationCode: null },
-      { new: true }
-    );
+    const user = await User.findOne({ where: { email: email.toLowerCase() } });
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    await user.update({ emailVerified: true });
 
     // Delete verification code
-    await VerificationCode.deleteOne({ _id: verCode._id });
+    await verCode.destroy();
 
     res.json({
       success: true,
@@ -139,7 +143,7 @@ export const login = async (req, res) => {
     }
 
     // Find user
-    const user = await User.findOne({ email: email.toLowerCase() });
+    const user = await User.findOne({ where: { email: email.toLowerCase() } });
     if (!user) {
       return res
         .status(401)
@@ -155,7 +159,10 @@ export const login = async (req, res) => {
     }
 
     // Compare password
-    const isPasswordValid = await bcryptjs.compare(password, user.password);
+    const isPasswordValid = await bcryptjs.compare(
+      password,
+      user.password || ""
+    );
     if (!isPasswordValid) {
       return res
         .status(401)
@@ -164,7 +171,7 @@ export const login = async (req, res) => {
 
     // Generate JWT
     const token = jwt.sign(
-      { userId: user._id, email: user.email },
+      { userId: user.id, email: user.email },
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
@@ -186,16 +193,14 @@ export const oauthLogin = async (req, res) => {
     const { email, fullName, provider } = req.body;
 
     if (!email || !fullName || !provider) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Email, fullName, and provider required",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Email, fullName, and provider required",
+      });
     }
 
     // Find or create user
-    let user = await User.findOne({ email: email.toLowerCase() });
+    let user = await User.findOne({ where: { email: email.toLowerCase() } });
 
     if (!user) {
       user = await User.create({
@@ -210,7 +215,7 @@ export const oauthLogin = async (req, res) => {
 
     // Generate JWT
     const token = jwt.sign(
-      { userId: user._id, email: user.email },
+      { userId: user.id, email: user.email },
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
@@ -229,7 +234,7 @@ export const oauthLogin = async (req, res) => {
 // Get user profile
 export const getProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.userId).populate("enrolledCourses");
+    const user = await User.findByPk(req.userId);
 
     if (!user) {
       return res
@@ -237,6 +242,7 @@ export const getProfile = async (req, res) => {
         .json({ success: false, message: "User not found" });
     }
 
+    // Optionally include enrollments separately
     res.json({ success: true, data: user });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
